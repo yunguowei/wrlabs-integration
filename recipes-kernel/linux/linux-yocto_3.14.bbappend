@@ -12,6 +12,8 @@ COMPATIBLE_MACHINE_xilinx-zynq = "${MACHINE}"
 SRCREV_machine = "${AUTOREV}"
 LINUX_VERSION = "3.14.39"
 
+KCONF_AUDIT_LEVEL = "0"
+
 KERNEL_EXTRA_ARGS_xilinx-zynq += "LOADADDR=0x8000"
 
 KERNEL_DEVICETREE_xilinx-zynq = "${S}/arch/arm/boot/dts/zynq-zc706.dts \
