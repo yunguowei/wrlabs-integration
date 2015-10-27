@@ -13,3 +13,4 @@ WR_MACHINE_ESSENTIAL_EXTRA_RDEPENDS ?= ""
 ALLOW_EMPTY_packagegroup-samples = "1"
 
 RDEPENDS_packagegroup-samples += " gcc-example"
+RPROVIDES_${PN} = "samples"
