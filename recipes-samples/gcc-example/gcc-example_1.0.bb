@@ -1,4 +1,4 @@
-DESCRIPTION = "The Nucleo-T gcc compile example test cases"
+DESCRIPTION = "The Pulsar gcc compile example test cases"
 SECTION = "GCC Example Test"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COREBASE}/LICENSE;md5=4d92cd373abda3937c2bc47fbc49d690"
