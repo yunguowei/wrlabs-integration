@@ -19,4 +19,5 @@ RDEPENDS_${PN} = "\
     \
     packagegroup-samples \
     packagegroup-wr-tools-debug \
+    packagegroup-webserver \
 "
