@@ -11,6 +11,7 @@ KBRANCH_xilinx-zynq = "standard/${MACHINE}"
 COMPATIBLE_MACHINE_xilinx-zynq = "${MACHINE}"
 SRCREV_machine = "${AUTOREV}"
 LINUX_VERSION = "3.14.39"
+LINUX_VERSION_EXTENSION = "-pulsar-${LINUX_KERNEL_TYPE}"
 
 KCONF_AUDIT_LEVEL = "0"
 
