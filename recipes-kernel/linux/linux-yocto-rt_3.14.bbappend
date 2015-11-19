@@ -10,6 +10,7 @@ SRC_URI += "${EXTRASRCZYNQ}"
 KBRANCH_xilinx-zynq = "standard/${MACHINE}"
 COMPATIBLE_MACHINE_xilinx-zynq = "${MACHINE}"
 SRCREV_machine = "${AUTOREV}"
+SRCREV_meta = "${AUTOREV}"
 LINUX_VERSION = "3.14.39"
 LINUX_VERSION_EXTENSION = "-pulsar-${LINUX_KERNEL_TYPE}"
 
