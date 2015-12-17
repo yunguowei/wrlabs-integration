@@ -7,7 +7,7 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac \
 
 PV = "2014.4+git${SRCPV}"
 
-SRC_URI = "git://github.com/Xilinx/qemu.git;branch=pub/2014.4.plnx"
+SRC_URI = "git://github.com/WindRiver-OpenSourceLabs/qemu.git;branch=pub/2014.4.plnx"
 S = "${WORKDIR}/git"
 
 DEFAULT_PREFERENCE = "-1"
