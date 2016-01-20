@@ -1,0 +1,10 @@
+[Unit]
+Description=Pre-container start configuration script
+Before=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/essential-cfg-start
+
+[Install]
+WantedBy=basic.target
