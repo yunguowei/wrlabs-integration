@@ -1,0 +1,86 @@
+From b48a73324355b0c7b0d8800d09bef8233ced755d Mon Sep 17 00:00:00 2001
+From: fli <fupan.li@windriver.com>
+Date: Sun, 21 Feb 2016 19:31:11 -0800
+Subject: [PATCH] wrl patch to only concern the real change
+
+Signed-off-by: fli <fupan.li@windriver.com>
+---
+ pkgdiff.pl | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/pkgdiff.pl b/pkgdiff.pl
+index 6c4f498..f1be2da 100644
+--- a/pkgdiff.pl
++++ b/pkgdiff.pl
+@@ -409,6 +409,7 @@ my %TargetPackages;
+ my %PackageFiles;
+ my %PathName;
+ my %FileChanges;
++my %FileChangesTotal;
+ my %PackageInfo;
+ my %InfoChanges;
+ my %PackageUsage;
+@@ -419,6 +420,7 @@ my %RemovePrefix;
+ my %PackageDeps;
+ my %TotalDeps;
+ my %DepChanges;
++my %DepChangesTotal;
+ 
+ # Files
+ my %AddedFiles;
+@@ -3080,6 +3082,7 @@ sub getExt($)
+ sub queryRPM($$)
+ {
+     my ($Path, $Query) = @_;
++    printMsg("INFO", "rpm -qp $Query \"$Path\""); 
+     return `rpm -qp $Query \"$Path\" 2>$TMP_DIR/null`;
+ }
+ 
+@@ -3251,17 +3254,20 @@ sub get_Summary()
+     }
+     
+     my ($TotalChanged, $Total) = (0, 0);
++    my $ReportStatus = 0;
+     # Files
+     foreach my $Format (keys(%FileChanges))
+     {
+         $TotalChanged += $FileChanges{$Format}{"SizeDelta"};
+         $Total += $FileChanges{$Format}{"Size"};
++	$FileChangeTotal += $FileChanges{$Format}{"Added"} + $FileChanges{$Format}{"Changed"} + $FileChanges{$Format}{"Removed"}
+     }
+     # Deps
+     foreach my $Kind (keys(%DepChanges))
+     {
+         $TotalChanged += $DepChanges{$Kind}{"SizeDelta"};
+         $Total += $DepChanges{$Kind}{"Size"};
++	$DepChangesTotal += $DepChanges{$Kind}{"Added"} + $DepChanges{$Kind}{"Removed"}
+     }
+     # Info
+     $TotalChanged += $InfoChanges{"SizeDelta"};
+@@ -3453,7 +3459,9 @@ sub createReport($)
+     else {
+         printMsg("INFO", "result: UNCHANGED");
+     }
+-    
++   
++    printMsg("INFO", "FileChanged:\n  ");
++
+     printMsg("INFO", "see detailed report:\n  $Path");
+ }
+ 
+@@ -3902,7 +3910,11 @@ sub scenario()
+     if($CustomTmpDir) {
+         cleanTmp();
+     }
+-    exit($ERROR_CODE{$RESULT{"status"}});
++
++    printMsg("INFO", "comparing packages result ... file changes total: $FileChangeTotal depchanges total: $DepChangesTotal ");
++
++    # exit($ERROR_CODE{$RESULT{"status"}});
++    exit($FileChangeTotal + $DepChangesTotal)
+ }
+ 
+ scenario();
+-- 
+2.7.0.235.g07c314d
+
