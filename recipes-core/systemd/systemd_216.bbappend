@@ -1,2 +1,0 @@
-
-PROVIDES += "libgudev"
