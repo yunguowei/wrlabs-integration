@@ -7,6 +7,9 @@ EXTRASRCZYNQ_xilinx-zynq = "file://xilinx-zynq-standard.scc"
 
 SRC_URI += "${EXTRASRCZYNQ}"
 
+KMACHINE_intel-corei7-64 = "computestick"
+KBRANCH_intel-corei7-64 = "standard/STCK1A32WFC"
+
 KBRANCH_xilinx-zynq = "standard/${MACHINE}"
 COMPATIBLE_MACHINE_xilinx-zynq = "${MACHINE}"
 SRCREV_machine = "${AUTOREV}"
