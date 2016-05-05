@@ -16,6 +16,7 @@ RDEPENDS_${PN} = "\
     links \
     links-x11 \
     tsocks \
+    firefox \
     \
     packagegroup-samples \
     packagegroup-wr-tools-debug \
