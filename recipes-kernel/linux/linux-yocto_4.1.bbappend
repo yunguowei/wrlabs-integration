@@ -37,3 +37,6 @@ KERNEL_DEVICETREE_fsl-ls10xx = "${S}/arch/arm/boot/dts/ls1021a-twr.dts \
                      ${S}/arch/arm/boot/dts/ls1021a-iot.dts"
 
 KERNEL_EXTRA_ARGS_fsl-ls10xx += "LOADADDR=0x80008000"
+
+# Combine all linux kernel modules into one rpm package
+inherit kernel-module-combine
