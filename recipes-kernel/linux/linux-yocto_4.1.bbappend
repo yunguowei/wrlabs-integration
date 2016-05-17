@@ -14,20 +14,18 @@ KBRANCH_xilinx-zynq = "standard/${MACHINE}"
 COMPATIBLE_MACHINE_xilinx-zynq = "${MACHINE}"
 SRCREV_machine = "${AUTOREV}"
 SRCREV_meta = "${AUTOREV}"
-LINUX_VERSION = "4.1.8"
+LINUX_VERSION = "4.1.22"
 LINUX_VERSION_EXTENSION = "-pulsar-${LINUX_KERNEL_TYPE}"
 
 KCONF_AUDIT_LEVEL = "0"
 
-KERNEL_EXTRA_ARGS_xilinx-zynq += "LOADADDR=0x8000"
-
-KERNEL_DEVICETREE_xilinx-zynq = "${S}/arch/arm/boot/dts/zynq-zc706.dts \
-                     ${S}/arch/arm/boot/dts/zynq-zc702.dts \
-                     ${S}/arch/arm/boot/dts/zynq-zc702-base-trd.dts \
-                     ${S}/arch/arm/boot/dts/zynq-zed.dts \
-                     ${S}/arch/arm/boot/dts/zynq-picozed.dts \
-                     ${S}/arch/arm/boot/dts/zynq-mini-itx-adv7511.dts \
-                     ${S}/arch/arm/boot/dts/zynq-mini-itx-adv7511-pcie.dts"
+KERNEL_DEVICETREE_xilinx-zynq = "zynq-zc706.dtb \
+                     zynq-zc702.dtb \
+                     zynq-zc702-base-trd.dtb \
+                     zynq-zed.dtb \
+                     zynq-picozed.dtb \
+                     zynq-mini-itx-adv7511.dtb \
+                     zynq-mini-itx-adv7511-pcie.dtb"
 
 # For the fsl-ls10xx boards we need additional kernel configuration
 KBRANCH_fsl-ls10xx = "standard/${MACHINE}"
