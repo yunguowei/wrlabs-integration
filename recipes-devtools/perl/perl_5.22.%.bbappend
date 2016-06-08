@@ -2,11 +2,11 @@ python split_perl_packages_append () {
     if d.getVar('PERL_MODULE_COMBINED_PACKAGE', True) == "1":
     # Combine all perl-modules packages into one package named as perl-modules
         if packages:
-            perlmodpkg = "perl-modules"
+            perlmodpkg = "${PN}-modules"
             files = " "
             rprovides = " "
             rrecommends = " " + d.getVar('RRECOMMENDS_%s' % perlmodpkg, True) + " "
-            rdeps = " " + "perl" + " "
+            rdeps = " " + "${PN}" + " "
             pkgs = " " + d.getVar('PACKAGES', True) + " "
 
             for m in packages:
