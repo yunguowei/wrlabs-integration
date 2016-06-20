@@ -555,7 +555,7 @@ new file mode 100644
 index 0000000..e6be215
 --- /dev/null
 +++ b/smart/commands/builddep.py
-@@ -0,0 +1,148 @@
+@@ -0,0 +1,152 @@
 +#
 +# Copyright (c) 2015 WindRiver, Inc.
 +#
@@ -575,6 +575,7 @@ index 0000000..e6be215
 +# along with this program; if not, write to the Free Software
 +# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 +#
++from smart.backends.rpm.rpmver import splitarch
 +from smart.transaction import Transaction, PolicyInstall, sortUpgrades
 +from smart.transaction import INSTALL, REINSTALL
 +from smart.option import OptionParser
@@ -656,6 +657,9 @@ index 0000000..e6be215
 +                        if req.providedby:
 +                            for prv in req.providedby:
 +                                for prvpkg in prv.packages:
++                                    prvver, prvarch = splitarch(prvpkg.version)
++                                    if prvarch.startswith('lib32'):
++                                        continue
 +                                    if not prvpkg.installed and prvpkg not in reqpkgs:
 +                                        reqpkgs.append(prvpkg)
 +                                    else:
