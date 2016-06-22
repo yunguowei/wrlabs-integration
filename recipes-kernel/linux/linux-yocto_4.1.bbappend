@@ -12,8 +12,16 @@ KBRANCH_intel-corei7-64 = "standard/next"
 
 KBRANCH_xilinx-zynq = "standard/${MACHINE}"
 COMPATIBLE_MACHINE_xilinx-zynq = "${MACHINE}"
-SRCREV_machine = "${AUTOREV}"
-SRCREV_meta = "${AUTOREV}"
+
+SRCREV_machine ?= "${AUTOREV}"
+SRCREV_meta ?= "${AUTOREV}"
+
+SRCREV_machine_xilinx-zynq = "3a28ed49637ec807df34488c24658b480810f1db"
+SRCREV_meta_xilinx-zynq = "9f68667031354532563766a3d04ca8a618e9177a"
+
+SRCREV_machine_intel-corei7-64 = "34b95cf5a882ffc1374fbe069735319fe989a453"
+SRCREV_meta_intel-corei7-64 = "9f68667031354532563766a3d04ca8a618e9177a"
+
 LINUX_VERSION = "4.1.22"
 LINUX_VERSION_EXTENSION = "-pulsar-${LINUX_KERNEL_TYPE}"
 
