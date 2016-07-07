@@ -22,6 +22,9 @@ SRCREV_meta_xilinx-zynq = "9f68667031354532563766a3d04ca8a618e9177a"
 SRCREV_machine_intel-corei7-64 = "34b95cf5a882ffc1374fbe069735319fe989a453"
 SRCREV_meta_intel-corei7-64 = "9f68667031354532563766a3d04ca8a618e9177a"
 
+SRCREV_machine_fsl-ls10xx = "bc5c12e776d6772827c97759be2ebfb2eeda5d07"
+SRCREV_meta_fsl-ls10xx = "48a3d45777ec90a69da4aa77a28551ebec8b28a8"
+
 LINUX_VERSION = "4.1.22"
 LINUX_VERSION_EXTENSION = "-pulsar-${LINUX_KERNEL_TYPE}"
 
@@ -39,8 +42,7 @@ KERNEL_DEVICETREE_xilinx-zynq = "zynq-zc706.dtb \
 KBRANCH_fsl-ls10xx = "standard/${MACHINE}"
 COMPATIBLE_MACHINE_fsl-ls10xx = "${MACHINE}"
 
-KERNEL_DEVICETREE_fsl-ls10xx = "${S}/arch/arm/boot/dts/ls1021a-twr.dts \
-                     ${S}/arch/arm/boot/dts/ls1021a-iot.dts"
+KERNEL_DEVICETREE_fsl-ls10xx = "ls1021a-iot.dtb"
 
 KERNEL_EXTRA_ARGS_fsl-ls10xx += "LOADADDR=0x80008000"
 
