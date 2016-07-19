@@ -1,5 +1,5 @@
 
 SRC_URI = " \
-    git://github.com/OverC/overc-installer.git;branch=2016-06-21 \
+    git://github.com/WindRiver-OpenSourceLabs/overc-installer.git;branch=pulsar-8 \
     file://git/COPYING \
 "
