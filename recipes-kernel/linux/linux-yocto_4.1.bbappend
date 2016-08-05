@@ -16,13 +16,13 @@ COMPATIBLE_MACHINE_xilinx-zynq = "${MACHINE}"
 SRCREV_machine ?= "${AUTOREV}"
 SRCREV_meta ?= "${AUTOREV}"
 
-SRCREV_machine_xilinx-zynq = "16b67c2aaebbb8879edad493f2f74846c0ae6b96"
+SRCREV_machine_xilinx-zynq = "07d10826bf8242c43e304e07c168858117100774"
 SRCREV_meta_xilinx-zynq = "0d6de63d4603b9cc3a4a68391bcb5156b9b0cf96"
 
-SRCREV_machine_intel-corei7-64 = "db3fd60cab90469ba89bed1414d279858feff45b"
+SRCREV_machine_intel-corei7-64 = "de4decd7e11b0e5a895765f88b8a471116473243"
 SRCREV_meta_intel-corei7-64 = "0d6de63d4603b9cc3a4a68391bcb5156b9b0cf96"
 
-SRCREV_machine_fsl-ls10xx = "f7fa5d7f9585d72599e4e4a819bbc4b832e25f7c"
+SRCREV_machine_fsl-ls10xx = "1ed4f983fe8cb304570bab041621c209d55c0883"
 SRCREV_meta_fsl-ls10xx = "0d6de63d4603b9cc3a4a68391bcb5156b9b0cf96"
 
 LINUX_VERSION = "4.1.22"
