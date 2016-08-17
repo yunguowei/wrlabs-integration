@@ -46,5 +46,10 @@ KERNEL_DEVICETREE_fsl-ls10xx = "ls1021a-iot.dtb"
 
 KERNEL_EXTRA_ARGS_fsl-ls10xx += "LOADADDR=0x80008000"
 
+#workaround the issue of the wifi missing ip address
+#after a long time without no interaction on computestick.
+KERNEL_MODULE_PROBECONF += "iwlmvm"
+module_conf_iwlmvm = "options iwlmvm power_scheme=1"
+
 # Combine all linux kernel modules into one rpm package
 inherit kernel-module-combine
