@@ -29,7 +29,6 @@ RDEPENDS_${PN} += "${@bb.utils.contains('BBFILE_COLLECTIONS','metagw','nodejs mo
 
 # fsl-ls10xx specific packages
 WRL_RPM_FEED_EXTRAS ?= ""
-WRL_RPM_FEED_EXTRAS_fsl-ls10xx += "${@bb.utils.contains('BBFILE_COLLECTIONS','vendor-proprietary','rtlswitch','',d)}"
 
 WRL_RPM_FEED_EXTRAS_intel-corei7-64 += " google-chrome-stable  firefox-stable"
 
