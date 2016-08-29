@@ -1,0 +1,31 @@
+From acafe46987dc539d59ad69004d6d12dd712b09b2 Mon Sep 17 00:00:00 2001
+From: fli <fupan.li@windriver.com>
+Date: Mon, 29 Aug 2016 00:00:03 -0700
+Subject: [PATCH] smartpm: catch the network unreachable error and exit
+
+Signed-off-by: fli <fupan.li@windriver.com>
+---
+ smart/fetcher.py | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/smart/fetcher.py b/smart/fetcher.py
+index deea799..bad12b6 100644
+--- a/smart/fetcher.py
++++ b/smart/fetcher.py
+@@ -734,7 +734,12 @@ class URL(object):
+         data = urllib.urlencode({"id":systemid})
+         self.query = data
+         opener = Opener()
+-        remote = opener.open(str(self))
++        try:
++            remote = opener.open(str(self))
++        except IOError, e:
++            print "Error: Network unreachable."
++            exit(1)
++
+         cached = 1
+         while hasattr(remote, 'errcode') and str(remote.errcode) == '401':
+             username = ''
+-- 
+2.7.4
+
