@@ -3,7 +3,11 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 # For the zynq boards we need additional kernel configuration
 EXTRASRCZYNQ = ""
-EXTRASRCZYNQ_xilinx-zynq = "file://xilinx-zynq-standard.scc"
+EXTRASRCZYNQ_xilinx-zynq = "\
+    file://xilinx-zynq-standard.scc \
+    file://xilinx-zynq-non_hardware.cfg \
+    file://xilinx-zynq.cfg \			 
+    "
 
 SRC_URI += "${EXTRASRCZYNQ}"
 
