@@ -7,10 +7,13 @@ python split_kernel_module_packages_append () {
             pkgs = " " + d.getVar('PACKAGES', True) + " "
             rprovides = " "
             files = " "
+            pkgv = d.getVar('PKGV', True)
+            pkgv = pkgv.replace("-", "+")
+            pkgr = d.getVar('PKGR', True)
 
             for m in modules:
                 pkgs = pkgs.replace(" " + m + " ", " ")
-                rprovides = rprovides + " %s (= ${PKGV}-${PKGR})" % m
+                rprovides = rprovides + " %s (= %s-%s)" % (m, pkgv, pkgr)
                 files = files + ' ' + d.getVar('FILES_%s' % m, True)
                 rdeps = rdeps + d.getVar('RDEPENDS_%s' % m, True) + " "
 
