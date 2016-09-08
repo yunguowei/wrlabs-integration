@@ -3,10 +3,10 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 # For the zynq boards we need additional kernel configuration
 EXTRASRCZYNQ = ""
-EXTRASRCZYNQ_xilinx-zynq = "\
-    file://xilinx-zynq-standard.scc \
-    file://xilinx-zynq.cfg \
-    "
+EXTRASRCZYNQ_xilinx-zynq = " \
+            file://xilinx-zynq-extra.scc \
+            file://xilinx-zynq-extra.cfg \
+          "
 
 SRC_URI += "${EXTRASRCZYNQ}"
 
@@ -19,8 +19,8 @@ COMPATIBLE_MACHINE_xilinx-zynq = "${MACHINE}"
 SRCREV_machine ?= "${AUTOREV}"
 SRCREV_meta ?= "${AUTOREV}"
 
-SRCREV_machine_xilinx-zynq = "07d10826bf8242c43e304e07c168858117100774"
-SRCREV_meta_xilinx-zynq = "f749da75bbacb6b1669a2726eb362862e221f55e"
+SRCREV_machine_xilinx-zynq = "5926bbf2019bbdc07a5a8fa131381acdeea0ba3e"
+SRCREV_meta_xilinx-zynq = "f9e944e63afde7be724db248939399a4e04cc5a4"
 
 SRCREV_machine_intel-corei7-64 = "de4decd7e11b0e5a895765f88b8a471116473243"
 SRCREV_meta_intel-corei7-64 = "f749da75bbacb6b1669a2726eb362862e221f55e"
@@ -37,6 +37,7 @@ KERNEL_DEVICETREE_xilinx-zynq = "zynq-zc706.dtb \
                      zynq-zc702.dtb \
                      zynq-zc702-base-trd.dtb \
                      zynq-zed.dtb \
+                     zynq-microzed-iiot.dtb \
                      zynq-picozed.dtb \
                      zynq-mini-itx-adv7511.dtb \
                      zynq-mini-itx-adv7511-pcie.dtb"
