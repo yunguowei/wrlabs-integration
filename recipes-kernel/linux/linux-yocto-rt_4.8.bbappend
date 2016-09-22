@@ -20,7 +20,6 @@ SRCREV_machine_intel-corei7-64 ?= "${AUTOREV}"
 SRCREV_meta_intel-corei7-64 ?= "${AUTOREV}"
 
 LINUX_VERSION_EXTENSION = "-pulsar-${LINUX_KERNEL_TYPE}"
-LINUX_VERSION = "4.8-rc5"
 
 KCONF_AUDIT_LEVEL = "0"
 
