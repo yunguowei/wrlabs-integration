@@ -36,9 +36,14 @@ WRL_RPM_FEED_EXTRAS_intel-corei7-64 += " \
     dpdk \
     dpdk-examples \
 "
-WRL_RPM_FEED_EXTRAS_xilinx-zynq += " \
-    iiot-demo \
-"
+
+#
+#There is license issue for iiot-demo,
+#So just comment it out, once the license
+#issue resolved, uncomment it.
+#WRL_RPM_FEED_EXTRAS_xilinx-zynq += " \
+#    iiot-demo \
+#"
 
 RDEPENDS_${PN} += "${WRL_RPM_FEED_EXTRAS}"
 
