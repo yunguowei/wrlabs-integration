@@ -19,6 +19,9 @@ SRCREV_meta ?= "${AUTOREV}"
 SRCREV_machine_intel-corei7-64 ?= "${AUTOREV}"
 SRCREV_meta_intel-corei7-64 ?= "${AUTOREV}"
 
+# While using AUTOREV turn off the kernel version sanity check
+deltask kernel_version_sanity_check
+
 LINUX_VERSION_EXTENSION = "-pulsar-${LINUX_KERNEL_TYPE}"
 
 KCONF_AUDIT_LEVEL = "0"
