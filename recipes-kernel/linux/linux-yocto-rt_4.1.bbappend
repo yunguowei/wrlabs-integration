@@ -6,10 +6,10 @@ KBRANCH_intel-corei7-64 = "standard/preempt-rt/next"
 SRCREV_machine ?= "${AUTOREV}"
 SRCREV_meta ?= "${AUTOREV}"
 
-SRCREV_machine_intel-corei7-64 = "48de65644adb0a01c1cb339bace04268679bddd1"
-SRCREV_meta_intel-corei7-64 = "4e8a96ae9f473f7f742c7a3f5eda70639d9813ec"
+SRCREV_machine_intel-corei7-64 = "9651dc3aad673845b34fcd5b4fa23e61e5dc4732"
+SRCREV_meta_intel-corei7-64 = "3c3197e65b6f2f5514853c1fe78ae8ffc131b02c"
 
-LINUX_VERSION = "4.1.30"
+LINUX_VERSION = "4.1.33"
 LINUX_VERSION_EXTENSION = "-pulsar-${LINUX_KERNEL_TYPE}"
 
 KCONF_AUDIT_LEVEL = "0"
