@@ -19,16 +19,16 @@ COMPATIBLE_MACHINE_xilinx-zynq = "${MACHINE}"
 SRCREV_machine ?= "${AUTOREV}"
 SRCREV_meta ?= "${AUTOREV}"
 
-SRCREV_machine_xilinx-zynq = "5926bbf2019bbdc07a5a8fa131381acdeea0ba3e"
-SRCREV_meta_xilinx-zynq = "f9e944e63afde7be724db248939399a4e04cc5a4"
+SRCREV_machine_xilinx-zynq = "c021b9366e7ebf2ce25d9849936e356b05872e14"
+SRCREV_meta_xilinx-zynq = "3c3197e65b6f2f5514853c1fe78ae8ffc131b02c"
 
-SRCREV_machine_intel-corei7-64 = "${@bb.utils.contains('KERNEL_FEATURES', 'leafhill', '41fc98f785ad56f0df1b85ac039bd5e391697842', 'de4decd7e11b0e5a895765f88b8a471116473243', d)}"
-SRCREV_meta_intel-corei7-64 = "68b5089eeffb5878a990d9eb418407c8e18a6f37" 
+SRCREV_machine_intel-corei7-64 = "${@bb.utils.contains('KERNEL_FEATURES', 'leafhill', 'fc5acb0869b95bdc2f9827278b75d6554cebac90', 'c02b86cd8e0c1ee1e3bee2f7344a6086a25c85a7', d)}"
+SRCREV_meta_intel-corei7-64 = "3c3197e65b6f2f5514853c1fe78ae8ffc131b02c" 
 
-SRCREV_machine_fsl-ls10xx = "1ed4f983fe8cb304570bab041621c209d55c0883"
-SRCREV_meta_fsl-ls10xx = "f749da75bbacb6b1669a2726eb362862e221f55e"
+SRCREV_machine_fsl-ls10xx = "04ca07eded6fad8aed6cdae189a1d377de29c476"
+SRCREV_meta_fsl-ls10xx = "3c3197e65b6f2f5514853c1fe78ae8ffc131b02c"
 
-LINUX_VERSION_intel-corei7-64 = "${@bb.utils.contains('KERNEL_FEATURES', 'leafhill', '4.1.27', '4.1.29', d)}"
+LINUX_VERSION_intel-corei7-64 = "${@bb.utils.contains('KERNEL_FEATURES', 'leafhill', '4.1.27', '4.1.33', d)}"
 
 LINUX_VERSION_EXTENSION = "-pulsar-${LINUX_KERNEL_TYPE}"
 
