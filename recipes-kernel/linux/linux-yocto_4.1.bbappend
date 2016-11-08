@@ -22,7 +22,7 @@ SRCREV_meta ?= "${AUTOREV}"
 SRCREV_machine_xilinx-zynq = "e3e46ef41c8e0e2bfac56f96d61bd452e3b49f81"
 SRCREV_meta_xilinx-zynq = "ef0d81be621a3e1f75b5fbc8fe97617b5679b7a0"
 
-SRCREV_machine_intel-corei7-64 = "${@bb.utils.contains('KERNEL_FEATURES', 'leafhill', 'fc5acb0869b95bdc2f9827278b75d6554cebac90', '6f5b20efc9ddb8823b0af991e94af91eee44df86', d)}"
+SRCREV_machine_intel-corei7-64 = "${@bb.utils.contains('KERNEL_FEATURES', 'leafhill', '6e06dacda21b3de803e5ca03b8d14e1021861b30', '6f5b20efc9ddb8823b0af991e94af91eee44df86', d)}"
 SRCREV_meta_intel-corei7-64 = "ef0d81be621a3e1f75b5fbc8fe97617b5679b7a0" 
 
 SRCREV_machine_fsl-ls10xx = "04ca07eded6fad8aed6cdae189a1d377de29c476"
