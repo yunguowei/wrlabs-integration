@@ -1,0 +1,60 @@
+From 0eb05d768de1c26c3b2dab9fe1166ec23c91408c Mon Sep 17 00:00:00 2001
+From: Lans Zhang <jia.zhang@windriver.com>
+Date: Wed, 9 Nov 2016 09:41:17 +0800
+Subject: [PATCH] libebl: Fix missing brackets around if statement body.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+GCC6 [will have] a nice new warning that showed a real bug:
+
+elfutils/libebl/eblobjnote.c: In function ‘ebl_object_note’:
+elfutils/libebl/eblobjnote.c:135:5: error: statement is indented as if
+it were guarded by... [-Werror=misleading-indentation]
+     switch (type)
+     ^~~~~~
+
+elfutils/libebl/eblobjnote.c:45:3: note: ...this ‘if’ clause, but it is
+not
+   if (! ebl->object_note (name, type, descsz, desc))
+   ^~
+
+And indeed, it should have been under the if, but wasn't because of
+missing
+brackets. Added brackets (and reindent).
+
+Signed-off-by: Mark Wielaard <mjw@redhat.com>
+Signed-off-by: Lans Zhang <jia.zhang@windriver.com>
+---
+ libebl/eblobjnote.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/libebl/eblobjnote.c b/libebl/eblobjnote.c
+index b9bf1c0..986040d 100644
+--- a/libebl/eblobjnote.c
++++ b/libebl/eblobjnote.c
+@@ -1,5 +1,5 @@
+ /* Print contents of object file note.
+-   Copyright (C) 2002, 2007, 2009, 2011, 2015 Red Hat, Inc.
++   Copyright (C) 2002, 2007, 2009, 2011, 2015, 2016 Red Hat, Inc.
+    This file is part of elfutils.
+    Written by Ulrich Drepper <drepper@redhat.com>, 2002.
+ 
+@@ -46,7 +46,7 @@ ebl_object_note (ebl, name, type, descsz, desc)
+      uint32_t descsz;
+      const char *desc;
+ {
+-  if (! ebl->object_note (name, type, descsz, desc))
++  if (! ebl->object_note (name, type, descsz, desc)) {
+     /* The machine specific function did not know this type.  */
+ 
+     if (strcmp ("stapsdt", name) == 0)
+@@ -232,4 +232,5 @@ ebl_object_note (ebl, name, type, descsz, desc)
+ 	/* Unknown type.  */
+ 	break;
+       }
++   }
+ }
+-- 
+2.7.4
+
