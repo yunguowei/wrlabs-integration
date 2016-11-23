@@ -7,7 +7,7 @@ SRCREV_machine ?= "${AUTOREV}"
 SRCREV_meta ?= "${AUTOREV}"
 
 SRCREV_machine_intel-corei7-64 = "d4bb1ec950005dc94f707a6fff6e125a6a5d35d0"
-SRCREV_meta_intel-corei7-64 = "ef0d81be621a3e1f75b5fbc8fe97617b5679b7a0"
+SRCREV_meta_intel-corei7-64 = "b28f454e264f24abce6acda7c1c4f05d9a6f7ba5"
 
 LINUX_VERSION = "4.1.33"
 LINUX_VERSION_EXTENSION = "-pulsar-${LINUX_KERNEL_TYPE}"
