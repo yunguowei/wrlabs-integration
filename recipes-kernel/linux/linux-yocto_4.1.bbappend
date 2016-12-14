@@ -8,7 +8,13 @@ EXTRASRCZYNQ_xilinx-zynq = " \
             file://xilinx-zynq-extra.cfg \
           "
 
-SRC_URI += "${EXTRASRCZYNQ}"
+EXTRASRCTPMSEC = ""
+EXTRASRCTPMSEC_intel-corei7-64 = " \
+            file://tpm-sec.scc \
+            file://tpm-sec.cfg \
+          "
+
+SRC_URI += "${EXTRASRCZYNQ} ${EXTRASRCTPMSEC}"
 
 KMACHINE_intel-corei7-64 = "${@bb.utils.contains('BSP_SUBTYPE', 'apollolake', 'apollolake', 'computestick', d)}"
 KBRANCH_intel-corei7-64 = "${@bb.utils.contains('BSP_SUBTYPE', 'apollolake', 'standard/intel/4.1.27/leaf-hill', 'standard/next', d)}"
