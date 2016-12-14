@@ -1,0 +1,2 @@
+# Support the TPM SEC feature
+kconf hardware tpm-sec.cfg
