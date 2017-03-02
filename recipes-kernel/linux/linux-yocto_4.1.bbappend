@@ -28,8 +28,8 @@ SRCREV_meta ?= "${AUTOREV}"
 SRCREV_machine_xilinx-zynq = "e3e46ef41c8e0e2bfac56f96d61bd452e3b49f81"
 SRCREV_meta_xilinx-zynq = "b28f454e264f24abce6acda7c1c4f05d9a6f7ba5"
 
-SRCREV_machine_intel-corei7-64 = "${@bb.utils.contains('BSP_SUBTYPE', 'apollolake', '6e06dacda21b3de803e5ca03b8d14e1021861b30', '6f5b20efc9ddb8823b0af991e94af91eee44df86', d)}"
-SRCREV_meta_intel-corei7-64 = "b28f454e264f24abce6acda7c1c4f05d9a6f7ba5" 
+SRCREV_machine_intel-corei7-64 = "${@bb.utils.contains('BSP_SUBTYPE', 'apollolake', '435c0950fd5b89eba02860a3aadc85b8247a5ff9', '6f5b20efc9ddb8823b0af991e94af91eee44df86', d)}"
+SRCREV_meta_intel-corei7-64 = "46b3153a39950b3542a99486bd964ab2ed65aeb4" 
 
 SRCREV_machine_fsl-ls10xx = "04ca07eded6fad8aed6cdae189a1d377de29c476"
 SRCREV_meta_fsl-ls10xx = "b28f454e264f24abce6acda7c1c4f05d9a6f7ba5"
