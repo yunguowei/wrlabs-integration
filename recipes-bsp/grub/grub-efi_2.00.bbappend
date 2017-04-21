@@ -34,5 +34,7 @@ do_install_append_class-target() {
 do_deploy_append_class-target() {
     install -d ${DEPLOYDIR}
 
-    install -m 0600 "${D}${EFI_BOOT_PATH}/grub.cfg" "${DEPLOYDIR}/grub.cfg"
+    install -m 0600 "${D}${EFI_BOOT_PATH}/grub.cfg" "${DEPLOYDIR}"
+    [ -s "${D}${EFI_BOOT_PATH}/grub.cfg.p7b" ] &&
+        install -m 0600 "${D}${EFI_BOOT_PATH}/grub.cfg.p7b" "${DEPLOYDIR}"
 }
