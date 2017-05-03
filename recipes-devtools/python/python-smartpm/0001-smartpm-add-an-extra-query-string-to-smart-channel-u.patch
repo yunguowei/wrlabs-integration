@@ -18,7 +18,7 @@ index 97602d2..4a015cc 100644
  
 -        self.query = data
 +        querystr = sysconf.get('query')
-+        if querystr != "":
++        if querystr and querystr != "":
 +            self.query = data + "&" + querystr
 +        else:
 +            self.query = data
