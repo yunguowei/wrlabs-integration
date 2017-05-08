@@ -261,7 +261,7 @@ function generate_rpm() {
 	# generate rpm
 	rpmbuild_bin=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/usr/bin/rpmbuild
 
-	${rpmbuild_bin} --nodeps --short-circuit --target core2_64-wrs-linux --buildroot $install_dir \
+	${rpmbuild_bin} --nodeps --short-circuit --target ${ARCH}-wrs-linux --buildroot $install_dir \
 	         --define "_rpmdir {$rpm_dir}" \
 		 --define '_build_name_fmt %%{NAME}-%%{VERSION}-%%{RELEASE}.%%{ARCH}.rpm' \
 		 --define '_use_internal_dependency_generator 0' \
@@ -283,7 +283,7 @@ function sign_rpm() {
 	gpg_home=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/etc/gpg
 	gpg_bin=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/usr/bin/gpg
 	rpm_bin=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/usr/bin/rpm
-	rpm_file=${rpm_dir}/${rpm_name}-${pkg_version}-${release_version}.core2_64.rpm
+	rpm_file=${rpm_dir}/${rpm_name}-${pkg_version}-${release_version}.${ARCH}.rpm
 	
         # import gpg key
 	if [ ! -e $gpg_home ]; then
