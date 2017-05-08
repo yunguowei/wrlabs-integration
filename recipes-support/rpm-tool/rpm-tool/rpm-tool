@@ -133,11 +133,6 @@ setup_env() {
 	exit 1
     fi
 
-    if [ x$gpg_name == x ]; then
-	echo "Please specify GPG key name for RPM signing ..."
-	exit 1
-    fi
-
     if [ x$spec == x ]; then
 	if [ x$rpm_name == x -o x$pkg_version == x -o x$release_version == x ]; then
 	    echo "Missing package name, or package version or release version..."
@@ -325,5 +320,9 @@ function sign_rpm() {
 setup_env
 ima_env_check
 generate_rpm
-sign_rpm
+
+if [ "x$gpg_name" != "x" ]; then
+    sign_rpm
+fi
+ 
 create_repo
