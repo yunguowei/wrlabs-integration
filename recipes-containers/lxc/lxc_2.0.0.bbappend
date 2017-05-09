@@ -1,3 +1,3 @@
-pkg_postinst_lxc_prepend() {
+pkg_postinst_${PN}_prepend() {
         readlink -f /sbin/init | grep systemd && exit 0
 }
