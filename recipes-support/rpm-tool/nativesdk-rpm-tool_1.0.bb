@@ -12,11 +12,13 @@ inherit nativesdk
 
 SRC_URI = "file://rpm-tool \
            file://ima-tool \
+           file://repo-tool \
            "
 do_install () {
 	install -d ${D}/${sbindir}
-	cp -a ${S}/rpm-tool ${D}/${sbindir}/
-	cp -a ${S}/ima-tool ${D}/${sbindir}/
+	install -m 0755 ${S}/rpm-tool ${D}/${sbindir}/
+	install -m 0755 ${S}/ima-tool ${D}/${sbindir}/
+	install -m 0755 ${S}/repo-tool ${D}/${sbindir}/
 }
 
-FILES_${PN} = "${sbindir}/rpm-tool ${sbindir}/ima-tool"
+FILES_${PN} = "${sbindir}/rpm-tool ${sbindir}/ima-tool ${sbindir}/repo-tool"
