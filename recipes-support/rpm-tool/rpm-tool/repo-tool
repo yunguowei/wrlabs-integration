@@ -20,7 +20,7 @@ usage() {
 debugging=false
 export debugging
 
-sdk_dir="/opt/windriver/wrlinux-small/8.0-intel-corei7-64"
+sdk_dir="/opt/windriver/Pulsar-Linux/8.0-intel-corei7-64"
 gpg_key=""
 gpg_name=""
 gpg_password=""
