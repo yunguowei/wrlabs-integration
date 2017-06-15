@@ -20,7 +20,13 @@ usage() {
 debugging=false
 export debugging
 
-sdk_dir="/opt/windriver/Pulsar-Linux/8.0-intel-corei7-64"
+# check if realpath is installed
+which realpath>/dev/null
+if [ $? != 0 ]; then
+    echo "realpath is not detected, please install it on your host..."
+    exit 1
+fi
+sdk_dir=`realpath "$SDKTARGETSYSROOT/../.."`
 gpg_key=""
 gpg_name=""
 gpg_password=""
@@ -47,13 +53,11 @@ shift $((OPTIND - 1))
 setup_env() {
     if [ -d $sdk_dir ]; then
 	# SDK env is not set
-	echo "Setting SDK environment..."
-	if [ ! -f $sdk_dir/environment-setup-core2-64-wrs-linux ]; then
-	    echo "No env file found in SDK root directory..."
-	    exit 1
-	fi
-	. $sdk_dir/environment-setup-core2-64-wrs-linux
-        echo $?
+        echo "Setting SDK environment: $sdk_dir"
+        if [ ! -d $sdk_dir/sysroots/x86_64-wrlinuxsdk-linux ]; then
+            echo "SDK root directory $sdk_dir/sysroots/x86_64-wrlinuxsdk-linux is not found in the host!"
+            exit 1
+        fi
     else
 	echo "SDK root directory $sdk_dir is not found in the host!"
 	exit 1
@@ -109,6 +113,7 @@ gpg_sign_env_prepare() {
                 echo "$gpg_name is not found in keyring..."
                 exit 1
             fi
+            gpg_name="`${gpg_bin} --no-permission-warning --homedir $gpg_home --list-keys -a | grep '^uid' | awk '{print $2}'|head -1`"
         fi
     fi
 }
@@ -143,10 +148,15 @@ END
 sign_rpms()
 {
     if [ x"$gpg_name" == x"" ]; then
-        echo "There is no gpg found in the sdk environment!"
+        echo "[ERROR]There is no gpg found in the sdk environment!"
         exit 1
     fi
     cd $rpms_dir
+    ls */*.rpm > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        echo "[ERROR]There is no any rpm pacakge in the directory: $rpms_dir!"
+        exit 1
+    fi
     for i in `ls */*.rpm`; do
         echo "sign $i rpm"
         #echo $i >> rpm-signed-list.log
