@@ -6,6 +6,11 @@ EXTRASRCZYNQ = ""
 EXTRASRCZYNQ_xilinx-zynq = " \
             file://xilinx-zynq-extra.scc \
             file://xilinx-zynq-extra.cfg \
+            file://xilinux-zynq-mm-larger-stack-guard-gap-between-vmas.patch \
+          "
+
+EXTRASRCZYNQ_fsl-ls10xx = " \
+            file://fsl-ls10xx-mm-larger-stack-guard-gap-between-vmas.patch \
           "
 
 EXTRASRCTPMSEC = ""
