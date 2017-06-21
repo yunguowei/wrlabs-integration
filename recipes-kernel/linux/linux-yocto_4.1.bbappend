@@ -19,7 +19,10 @@ EXTRASRCTPMSEC_intel-corei7-64 = " \
             file://tpm-sec.cfg \
           "
 
-SRC_URI += "${EXTRASRCZYNQ} ${EXTRASRCTPMSEC}"
+EXTRASRCX86 = ""
+EXTRASRCX86_intel-corei7-64 = "${@bb.utils.contains('BSP_SUBTYPE', 'apollolake', 'file://mm-larger-stack-guard-gap-between-vmas.patch', '', d)}"
+
+SRC_URI += "${EXTRASRCZYNQ} ${EXTRASRCTPMSEC} ${EXTRASRCX86}"
 
 KMACHINE_intel-corei7-64 = "${@bb.utils.contains('BSP_SUBTYPE', 'apollolake', 'apollolake', 'computestick', d)}"
 KBRANCH_intel-corei7-64 = "${@bb.utils.contains('BSP_SUBTYPE', 'apollolake', 'standard/intel/4.1.27/leaf-hill', 'standard/next', d)}"
