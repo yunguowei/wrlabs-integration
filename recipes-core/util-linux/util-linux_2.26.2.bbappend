@@ -6,5 +6,8 @@ pkg_preinst_${PN}-doc () {
     if [ x"$D" = "x" -a -f ${mandir}/man1/su.1 ]; then
         rm -f ${mandir}/man1/su.1
     fi
+    if [ x"$D" = "x" -a -f ${mandir}/man8/nologin.8 ]; then
+        rm -f ${mandir}/man8/nologin.8
+    fi
 }
 
