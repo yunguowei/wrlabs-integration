@@ -1,0 +1,35 @@
+From e2ab4072cb516f416f89929a0b5486e1cf7425b5 Mon Sep 17 00:00:00 2001
+From: fli <fupan.li@windriver.com>
+Date: Fri, 21 Jul 2017 01:42:25 -0700
+Subject: [PATCH] rpm: remove the retry debug info
+
+Signed-off-by: fli <fupan.li@windriver.com>
+---
+ rpmdb/rpmdb.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/rpmdb/rpmdb.c b/rpmdb/rpmdb.c
+index a07c552..3600cf4 100644
+--- a/rpmdb/rpmdb.c
++++ b/rpmdb/rpmdb.c
+@@ -2247,8 +2247,6 @@ retry_get:
+ 	           if ((dbi)->dbi_debug)
+ 	               fprintf(stderr, "==> DB_BUFFER_SMALL orig requested (%d), configured (%d), forcing larger buffer (%d), new size (%d)\n",
+ 	                    origlen, vp->ulen, uhlen, vp->size);
+-	           else
+-	               fprintf(stderr, "==> retry (%d) db3cpget (%d)\n", retry, uhlen);
+ 	           goto retry_get;
+ 	        }
+ 	    }
+@@ -2256,8 +2254,6 @@ retry_get:
+ 	        if ((dbi)->dbi_debug)
+ 	           fprintf(stderr, "==> success orig requested (%d), configured buffer (%d), buffer (%d), size after dbiGet (%d)\n",
+ 			origlen, vp->ulen, uhlen, vp->size);
+-	        else
+-	           fprintf(stderr, "==> success\n");
+ 	    }
+ 	}
+     } else
+-- 
+2.11.0
+
