@@ -11,6 +11,7 @@ SRC_URI += "file://smartpm-add-a-builddep-command-to-install-all-of-the.patch \
 	    file://smartpm-Secure-Shield-enabled-for-smart.patch \
 	    file://0001-smartpm-add-an-extra-query-string-to-smart-channel-u.patch \
 	    file://0001-smartpm-Use-the-python2.7-default-uft-8-encoding.patch \
+	    file://0001-python-smartpm-Don-t-ignore-error-if-RPM-transaction.patch \
            "
 # Add the option to change the data-dir to '/usr/lib/smart/data-dir'
 PACKAGECONFIG[change-data-dir] = ",,,"
