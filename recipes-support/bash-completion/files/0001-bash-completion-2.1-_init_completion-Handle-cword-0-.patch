@@ -1,0 +1,38 @@
+From e0f540dbdeb572fb319077c346d444e11799b191 Mon Sep 17 00:00:00 2001
+From: Barry Warsaw <barry@python.org>
+Date: Tue, 25 Jul 2017 09:22:37 +0000
+Subject: [PATCH] bash-completion-2.1: _init_completion Handle cword < 0 (LP:
+ #1289597)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This patch comes from upstream:
+https://anonscm.debian.org/cgit/bash-completion/bash-completion.git/commit/?id=a9c556ccad819869a6a5d932aac0a75a99372f08
+
+Previously only bash 4.3 seemed to provoke this, but now with the
+empty command consistency tweak it occurs with earlier as well.
+
+Signed-off-by: Barry Warsaw <barry@python.org>
+Signed-off-by: Ville Skyttä <ville.skytta@iki.fi
+Signed-off-by: Guojian Zhou <guojian.zhou@windriver.com>
+---
+ bash_completion | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/bash_completion b/bash_completion
+index 6d3ba76..5d9c645 100644
+--- a/bash_completion
++++ b/bash_completion
+@@ -707,7 +707,7 @@ _init_completion()
+         fi
+     done
+ 
+-    [[ $cword -eq 0 ]] && return 1
++    [[ $cword -le 0 ]] && return 1
+     prev=${words[cword-1]}
+ 
+     [[ ${split-} ]] && _split_longopt && split=true
+-- 
+2.7.4
+
