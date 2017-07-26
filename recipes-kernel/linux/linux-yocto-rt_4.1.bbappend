@@ -6,6 +6,13 @@ KBRANCH_intel-corei7-64 = "standard/preempt-rt/next"
 SRCREV_machine ?= "${AUTOREV}"
 SRCREV_meta ?= "${AUTOREV}"
 
+EXTRASRCINTL = ""
+EXTRASRCINTL_intel-corei7-64 = " \
+            file://mm-larger-stack-guard-gap-between-vmas.patch \
+"
+
+SRC_URI += "${EXTRASRCINTL}"
+
 SRCREV_machine_intel-corei7-64 = "d4bb1ec950005dc94f707a6fff6e125a6a5d35d0"
 SRCREV_meta_intel-corei7-64 = "b28f454e264f24abce6acda7c1c4f05d9a6f7ba5"
 
