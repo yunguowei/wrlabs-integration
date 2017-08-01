@@ -4,3 +4,5 @@
 
 DEPENDS_class-nativesdk = "zlib-native bzip2-replacement-native readline-native"
 BBCLASSEXTEND += "nativesdk"
+
+RRECOMMENDS_${PN}_class-nativesdk = ""
