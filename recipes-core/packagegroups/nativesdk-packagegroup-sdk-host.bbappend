@@ -4,7 +4,7 @@
 
 RDEPENDS_${PN} += "\
     nativesdk-rpm-build \
-    nativesdk-createrepo \
+    nativesdk-createrepo-c \
     nativesdk-gnupg \
     ${@bb.utils.contains('DISTRO_FEATURES', 'ima', 'nativesdk-ima-evm-utils', '', d)} \
     nativesdk-libxml2-python \
