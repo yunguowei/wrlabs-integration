@@ -1,0 +1,6 @@
+PR = "${INC_PR}.0"
+require ipset.inc
+
+SRC_URI[md5sum] = "231790be940438287438df1f33857376"
+SRC_URI[sha256sum] = "498e411cc1d134201a31a56def6c0936c642958c2d4b4ce7d9955240047a45fe"
+

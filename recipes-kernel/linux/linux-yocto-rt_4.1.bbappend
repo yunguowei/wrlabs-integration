@@ -6,10 +6,17 @@ KBRANCH_intel-corei7-64 = "standard/preempt-rt/next"
 SRCREV_machine ?= "${AUTOREV}"
 SRCREV_meta ?= "${AUTOREV}"
 
-SRCREV_machine_intel-corei7-64 = "48de65644adb0a01c1cb339bace04268679bddd1"
-SRCREV_meta_intel-corei7-64 = "4e8a96ae9f473f7f742c7a3f5eda70639d9813ec"
+EXTRASRCINTL = ""
+EXTRASRCINTL_intel-corei7-64 = " \
+            file://mm-larger-stack-guard-gap-between-vmas.patch \
+"
 
-LINUX_VERSION = "4.1.30"
+SRC_URI += "${EXTRASRCINTL}"
+
+SRCREV_machine_intel-corei7-64 = "d4bb1ec950005dc94f707a6fff6e125a6a5d35d0"
+SRCREV_meta_intel-corei7-64 = "b28f454e264f24abce6acda7c1c4f05d9a6f7ba5"
+
+LINUX_VERSION = "4.1.33"
 LINUX_VERSION_EXTENSION = "-pulsar-${LINUX_KERNEL_TYPE}"
 
 KCONF_AUDIT_LEVEL = "0"

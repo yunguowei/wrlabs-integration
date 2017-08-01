@@ -1,0 +1,30 @@
+From 6e86eab46946b281ee84e8e64837adb1693d71a5 Mon Sep 17 00:00:00 2001
+From: fli <fupan.li@windriver.com>
+Date: Thu, 27 Apr 2017 23:48:25 -0700
+Subject: [PATCH] smartpm: add an extra-query string to smart channel url
+
+Signed-off-by: fli <fupan.li@windriver.com>
+---
+ smart/fetcher.py | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/smart/fetcher.py b/smart/fetcher.py
+index 97602d2..4a015cc 100644
+--- a/smart/fetcher.py
++++ b/smart/fetcher.py
+@@ -751,7 +751,11 @@ class URL(object):
+         else:
+             data = urllib.urlencode({"id":systemid})
+ 
+-        self.query = data
++        querystr = sysconf.get('query')
++        if querystr and querystr != "":
++            self.query = data + "&" + querystr
++        else:
++            self.query = data
+         
+         opener = Opener()
+         try:
+-- 
+2.11.0
+

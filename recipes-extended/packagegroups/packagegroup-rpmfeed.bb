@@ -30,7 +30,21 @@ RDEPENDS_${PN} += "${@bb.utils.contains('BBFILE_COLLECTIONS','metagw','nodejs mo
 # fsl-ls10xx specific packages
 WRL_RPM_FEED_EXTRAS ?= ""
 
-WRL_RPM_FEED_EXTRAS_intel-corei7-64 += " google-chrome-stable  firefox-stable"
+WRL_RPM_FEED_EXTRAS_intel-corei7-64 += " \
+    google-chrome-stable  \
+    firefox-stable \
+    dpdk \
+    dpdk-examples \
+    sensors-demo \
+"
+
+#
+#There is license issue for iiot-demo,
+#So just comment it out, once the license
+#issue resolved, uncomment it.
+WRL_RPM_FEED_EXTRAS_xilinx-zynq += " \
+    iiot-demo \
+"
 
 RDEPENDS_${PN} += "${WRL_RPM_FEED_EXTRAS}"
 

@@ -1,0 +1,209 @@
+#!/bin/bash
+export LANG=C
+
+usage() {
+    echo >&2 "usage: ${0##*/} [-d] [-m] [-h] [?] [-n <#SDK environment imported gpg name>] [-p <#gpg password name>]"
+    echo >&2 "[-s <#sdk install directory>] [-r <#directory to generate rpm>] [-g <# gpg key will be imported into sdk>] " 
+    echo >&2 "   -d set +x."
+    echo >&2 "   -m rpm sign method: 'resign' by default, and rpm sign will use the 'addsign' with this option."
+    echo >&2 "   -p the gpg pass phrase."
+    echo >&2 "   -r The rpms directory, where all packages are generated."
+    echo >&2 "   -s The SDK directory, where the sdk is installed."
+    echo >&2 "   -g The GPG key file for rpm signing, which would be imported to gpg keyring SDK sysroot."
+    echo >&2 "   -n The GPG name for rpm signing."
+    echo >&2 "   -h Print this help menu."
+    echo >&2 "   ? Print this help menu."
+    exit 1
+}
+
+# Are we debugging?
+debugging=false
+export debugging
+
+# check if realpath is installed
+which realpath>/dev/null
+if [ $? != 0 ]; then
+    echo "realpath is not detected, please install it on your host..."
+    exit 1
+fi
+sdk_dir=`realpath "$SDKTARGETSYSROOT/../.."`
+gpg_key=""
+gpg_name=""
+gpg_password=""
+rpms_dir="`pwd`"
+# Use the "resign" method to signature rpm packages by default.
+rpm_sign_opt="resign"
+
+while getopts "dp:mr:s:g:n:h?" FLAG; do
+    case $FLAG in
+        d)	if $debugging; then set -x; fi; debugging=true;;
+        m)      rpm_sign_opt="addsign";;
+        r)      rpms_dir=$OPTARG;;
+        s)      sdk_dir=$OPTARG;;
+        p)      gpg_password=$OPTARG;;
+        g)      gpg_key=$OPTARG;;
+        n)      gpg_name=$OPTARG;;
+        h)      usage;;
+        \?)     usage;;
+    esac
+done
+
+shift $((OPTIND - 1))
+
+setup_env() {
+    if [ -d $sdk_dir ]; then
+	# SDK env is not set
+        echo "Setting SDK environment: $sdk_dir"
+        if [ ! -d $sdk_dir/sysroots/x86_64-wrlinuxsdk-linux ]; then
+            echo "SDK root directory $sdk_dir/sysroots/x86_64-wrlinuxsdk-linux is not found in the host!"
+            exit 1
+        fi
+    else
+	echo "SDK root directory $sdk_dir is not found in the host!"
+	exit 1
+    fi
+}
+
+create_repo() {
+    if [ -d $rpms_dir ]; then
+        cd $rpms_dir
+    fi
+    for arch in *
+    do
+       pkgarch=${arch##*/}
+       if [ -d $pkgarch ]; then
+           echo "Processing $pkgarch..."
+           $sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/usr/bin/createrepo --update -q $pkgarch
+       fi
+    done
+}
+
+gpg_sign_env_prepare() {
+    if [ x"$sdk_dir" == x"" ]; then
+	echo "please specify sdk root"
+        exit 1
+    else
+	export gpg_home=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/etc/gpg
+	export gpg_bin=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/usr/bin/gpg
+	export rpm_bin=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/usr/bin/rpm
+	
+        # import gpg key
+	if [ ! -e $gpg_home ]; then
+            mkdir -p $gpg_home
+	fi
+
+	# check if the gpg key is available
+        if [ X"$gpg_name" == X"" ];then
+            # if user does not input the "gpg_name", try to find the sdk default keyID's user name as the gpg_name.
+            gpg_name="`${gpg_bin} --no-permission-warning --homedir $gpg_home --list-keys -a | grep '^uid' | awk '{print $2}'|head -1`"
+        fi
+	${gpg_bin} --no-permission-warning --homedir $gpg_home --list-keys -a | grep "$gpg_name"
+	if [ $? == 0 ]; then
+	    echo "gpg key is available..."
+        elif [ x${gpg_key} == x ]; then
+	    echo "Missing gpg key file for ${gpg_name}..."
+	    exit 1
+        elif [ ! -e ${gpg_key} ]; then
+            echo "Specified GPG key file ${gpg_key} doesn't exist..."
+            exit 1
+        else
+            ${gpg_bin} --homedir $gpg_home --import $gpg_key
+	    ${gpg_bin} --no-permission-warning --homedir $gpg_home --list-keys -a | grep "$gpg_name"
+	    if [ $? != 0 ]; then
+                echo "$gpg_name is not found in keyring..."
+                exit 1
+            fi
+            gpg_name="`${gpg_bin} --no-permission-warning --homedir $gpg_home --list-keys -a | grep '^uid' | awk '{print $2}'|head -1`"
+        fi
+    fi
+}
+
+sign_rpm_nopasswd() {
+    # sign the rpm without gpg pass phase password
+    ${rpm_bin} --$rpm_sign_opt --define "__gpg $gpg_bin" \
+               --define "_gpg_path $gpg_home" \
+               --define  "_gpg_name $gpg_name" \
+               ${rpm_file}	
+}
+
+sign_rpm_passwd() {
+# sign the rpm with gpg pass phase password
+rpm_file=$1
+RPM_SIGN_TIMEOUT=$2
+
+expect <<- END
+spawn $rpm_bin --$rpm_sign_opt --define "__gpg $gpg_bin" --define "_gpg_path $gpg_home" --define "_gpg_name $gpg_name" $rpm_file
+expect {
+        "Enter pass phrase:" {send "$gpg_password\r"}
+       }
+sleep 0.1
+expect {
+        "Pass phrase is good." {puts "rpm sign $rpm_file OK\n"}
+       }
+sleep $RPM_SIGN_TIMEOUT
+exit
+END
+}
+
+sign_rpms()
+{
+    if [ x"$gpg_name" == x"" ]; then
+        echo "[ERROR]There is no gpg found in the sdk environment!"
+        exit 1
+    fi
+    cd $rpms_dir
+    ls */*.rpm > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        echo "[ERROR]There is no any rpm pacakge in the directory: $rpms_dir!"
+        exit 1
+    fi
+    for i in `ls */*.rpm`; do
+        echo "sign $i rpm"
+        #echo $i >> rpm-signed-list.log
+        MD5_SUM1=`md5sum $i | awk '{print $1}'`
+        if [ x"$gpg_password" != X"" ]; then
+            RPM_SIGN_TIMEOUT=0
+            RPM_SIZE=`ls -l $i | cut -d " " -f5`
+            if [ $RPM_SIZE -ge 2096000 ]; then
+                RPM_SIGN_TIMEOUT=1
+                if [ $RPM_SIZE -ge 10240000 ]; then
+                    RPM_SIGN_TIMEOUT=3
+                fi
+                if [ $RPM_SIZE -ge 102400000 ]; then
+                    RPM_SIGN_TIMEOUT=10
+                fi
+            fi
+            sign_rpm_passwd $i $RPM_SIGN_TIMEOUT
+        else
+            sign_rpm_nopasswd $i
+        fi
+        MD5_SUM2=`md5sum $i | awk '{print $1}'`
+        while [ X"$MD5_SUM1" == X"$MD5_SUM2" ]; do
+            echo "$i MD5SUM is same!"
+            $rpm_bin -Kv $i
+            (( ++RPM_SIGN_TIMEOUT ))
+            #echo "rpm $i " >> rpm-resigned-list.log
+            if [ x"$gpg_password" != X"" ]; then
+                sign_rpm_passwd $i $RPM_SIGN_TIMEOUT
+            else
+                sign_rpm_nopasswd $i
+            fi
+            sync
+            MD5_SUM2=`md5sum $i | awk '{print $1}'`
+            rm -f $i\.*
+        done
+        if [ X"$MD5_SUM1" != X"$MD5_SUM2" ]; then
+            echo "$i MD5SUM changes $MD5_SUM1 => $MD5_SUM2"
+            $rpm_bin -Kv $i
+        fi
+    done
+    #After these rpm packages are resigned with new gpg key, these rpm packages'
+    #permissions are changed into "-rw-------".
+    #So restore these rpm packages' permissions to "-rw-r--r--".
+    chmod a+r */*.rpm
+}
+
+setup_env
+gpg_sign_env_prepare
+sign_rpms
+create_repo
