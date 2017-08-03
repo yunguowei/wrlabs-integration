@@ -84,11 +84,11 @@ do_sig(){
 	OLDIFS=$IFS
 	IFS=":"
 	basedir=`basename $dir`
-	cmd="evmctl ima_sign --rsa --hashalgo sha256 --sigfile --key $key"
+	cmd="evmctl ima_sign --hashalgo sha256 --sigfile --key $key"
 	cd $dir
 	for filename in `find -type f -printf "%p:"`; do
 		debug "signing file $filename......"
-		evmctl ima_sign -n --rsa --hashalgo sha256 --sigfile --key $key $filename >/dev/null 2>&1
+		evmctl ima_sign -n --hashalgo sha256 --sigfile --key $key $filename >/dev/null 2>&1
 		abs_filename=`echo $filename | sed 's/^\.//'`
 		sig_lists="`base64 ${filename}.sig`|${abs_filename}&${sig_lists}"
 		rm -rf ${filename}.sig
