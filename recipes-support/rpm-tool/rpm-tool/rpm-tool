@@ -175,7 +175,7 @@ function format_spec() {
 	    
 	    if $enable_ima ;then
 		debug "signing file $f......"
-		evmctl ima_sign -n --rsa --hashalgo sha256 --sigfile --key $ima_key $f >/dev/null 2>&1
+		evmctl ima_sign -n --hashalgo sha256 --sigfile --key $ima_key $f >/dev/null 2>&1
 		if [ ! -e "${f}.sig" ]; then
 			echo "ERROR: IMA siging failed on file $f"
 			exit 1
