@@ -17,7 +17,7 @@ SRCREV_meta ?= "926c93ae07de2173b4f764d1da6996597a6d2b73"
 SRC_URI = "git://git.yoctoproject.org/linux-yocto-4.8.git;branch=${KBRANCH};name=machine \
            git://git.yoctoproject.org/yocto-kernel-cache;type=kmeta;name=meta;branch=yocto-4.8;destsuffix=${KMETA}"
 
-LINUX_VERSION ?= "4.8.12"
+LINUX_VERSION ?= "4.8.25"
 
 PV = "${LINUX_VERSION}+git${SRCPV}"
 
@@ -32,7 +32,7 @@ KERNEL_DEVICETREE_qemuarm = "versatile-pb.dtb"
 
 # Functionality flags
 KERNEL_EXTRA_FEATURES ?= "features/netfilter/netfilter.scc features/taskstats/taskstats.scc"
-KERNEL_FEATURES_append = " ${KERNEL_EXTRA_FEATURES}"
-KERNEL_FEATURES_append_qemuall=" cfg/virtio.scc"
-KERNEL_FEATURES_append_qemux86=" cfg/sound.scc cfg/paravirt_kvm.scc"
-KERNEL_FEATURES_append_qemux86-64=" cfg/sound.scc"
+KERNEL_FEATURES_append = " cfg/virtio.scc ${KERNEL_EXTRA_FEATURES}"
+#KERNEL_FEATURES_append_qemuall=" cfg/virtio.scc"
+#KERNEL_FEATURES_append_qemux86=" cfg/sound.scc cfg/paravirt_kvm.scc"
+#KERNEL_FEATURES_append_qemux86-64=" cfg/sound.scc"
