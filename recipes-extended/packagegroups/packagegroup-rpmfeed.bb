@@ -18,7 +18,6 @@ RDEPENDS_${PN} = "\
     tsocks \
     \
     packagegroup-samples \
-    packagegroup-wr-tools-debug \
     packagegroup-webserver \
     packagegroup-xfce-desktop \
 "
