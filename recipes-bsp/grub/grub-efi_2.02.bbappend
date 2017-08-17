@@ -61,3 +61,6 @@ do_deploy_append_class-target() {
 
 FILES_${PN} += "${EFI_BOOT_PATH}"
 
+python __anonymous() {
+    d.setVarFlag('do_deploy', "fakeroot", "1")
+}
