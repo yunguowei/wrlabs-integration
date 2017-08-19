@@ -1,5 +1,5 @@
-Encrypted Storage
-=================
+LUKS
+====
 
 This feature provides secure storage for application data. Some applications
 need secure storage for sensitive data which must not be accessible to another
