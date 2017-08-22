@@ -8,7 +8,9 @@ EXTRASRCZYNQ_xilinx-zynq = "file://xilinx-zynq-standard.scc"
 #KMACHINE_intel-corei7-64 = "computestick"
 KBRANCH_intel-corei7-64 = "standard/base"
 
-SRC_URI += "${EXTRASRCZYNQ}"
+SRC_URI += "${EXTRASRCZYNQ} \
+	file://extra-kernel-feature.scc \
+"
 
 KBRANCH_xilinx-zynq = "standard/${MACHINE}"
 COMPATIBLE_MACHINE_xilinx-zynq = "${MACHINE}"
