@@ -10,6 +10,7 @@ KBRANCH_intel-corei7-64 = "standard/base"
 
 SRC_URI += "${EXTRASRCZYNQ} \
 	file://extra-kernel-feature.scc \
+	file://0001-mwifiex-allow-using-network-namespaces.patch \
 "
 
 KBRANCH_xilinx-zynq = "standard/${MACHINE}"
