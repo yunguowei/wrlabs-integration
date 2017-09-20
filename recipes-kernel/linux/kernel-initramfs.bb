@@ -9,7 +9,7 @@ PROVIDES = "virtual/kernel-initramfs"
 
 ALLOW_EMPTY_${PN} = "1"
 
-S = "${STAGING_KERNEL_DIR}"
+#S = "${STAGING_KERNEL_DIR}"
 B = "${WORKDIR}/${BPN}-${PV}"
 
 inherit linux-kernel-base kernel-arch
