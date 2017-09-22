@@ -13,6 +13,10 @@ S = "${WORKDIR}/git"
 
 BBCLASSEXTEND += "native nativesdk"
 
+do_compile_prepend(){
+	install -d ${prefix}
+}
+
 #do_configure(){
 #    :
 #}
