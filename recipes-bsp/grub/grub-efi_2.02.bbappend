@@ -65,6 +65,8 @@ do_deploy_append_class-target() {
 
 FILES_${PN} += "${EFI_BOOT_PATH}"
 
+addtask  deploy after do_install before do_package
+
 python __anonymous() {
     d.setVarFlag('do_deploy', "fakeroot", "1")
 }
