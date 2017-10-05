@@ -8,6 +8,7 @@ SRC_URI += "file://xfce4-panel-menu_48x48.png \
             file://xfce4-panel-menu_24x24.png \
             file://xfce4-panel-menu_22x22.png \
             file://xfce4-panel-menu_16x16.png \
+            file://pulse-audio-plugin.patch \
            "
 
 do_install_append(){
