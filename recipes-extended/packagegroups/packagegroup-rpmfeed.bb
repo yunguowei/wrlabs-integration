@@ -20,6 +20,10 @@ RDEPENDS_${PN} = "\
     packagegroup-samples \
     packagegroup-webserver \
     packagegroup-xfce-desktop \
+    openjdk-7-jre \
+    openjdk-7-jdk \
+    openjdk-8  \
+    openjre-8  \
 "
 
 # If using meta-gateway add nodejs and mosquitto
