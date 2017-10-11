@@ -8,21 +8,20 @@ debug() {
 export -f debug
 
 usage() {
-    echo >&2 "usage: ${0##*/} [-t] [-d] [-s <#spec file>] [-p <#package name>]"
-    echo >&2 "                   [-v <#package version>] [-r <#release version>] [-i <#recipe install directory>]"
-    echo >&2 "                   [-o <#directory to generate rpm>]" 
+    echo >&2 "usage: ${0##*/} <option> "
     echo >&2 "The rpm will be named as <package name>-<package version>-<release-version>.core2_64.rpm"
-    echo >&2 "   -d set +x."
-    echo >&2 "   -t dry run."
-    echo >&2 "   -s specifies the spec file, if it is omitted, the spec will be auto generated."
-    echo >&2 "   -p the application name, which is also the basename of the generated rpm."
-    echo >&2 "   -v the application version."
-    echo >&2 "   -r the application release version."
-    echo >&2 "   -i the application install directory, all files under this directory will be packaged."
-    echo >&2 "   -o The output directory, where the package is generated."
-    echo >&2 "   -g The GPG key file for rpm signing, which will be imported to gpg keyring SDK sysroot."
-    echo >&2 "   -m The IMA private key file for IMA siging."
-    echo >&2 "   -n The GPG name for rpm signing."
+    echo >&2 "   options are following:"
+    echo >&2 "   --spec-file specify the spec file, if it is omitted, the spec will be auto generated."
+    echo >&2 "   --pkg-name specify the application name, which is also the basename of the generated rpm."
+    echo >&2 "   --pkg-version specify the application version."
+    echo >&2 "   --pkg-release specify the application release version."
+    echo >&2 "   --pkg-dir specify the application install directory, all files under this directory will be packaged."
+    echo >&2 "   --gpg-key The GPG key file for rpm signing, which will be imported to gpg keyring SDK sysroot."
+    echo >&2 "   --gpg-pass GPG key password"
+    echo >&2 "   --gpg-name GPG name for rpm signing"
+    echo >&2 "   --ima-key The IMA private key file for IMA signing."
+    echo >&2 "   --ima-pass IMA key password"
+    echo >&2 "   --rpm-dir The output directory, where the package is generated."
     exit 1
 }
 
@@ -34,48 +33,83 @@ export debugging
 try=""
 export try
 
+pkg_name=""
+pkg_version=""
+pkg_release=""
 install_dir=""
 gpg_key=""
-ima_key=""
+gpg_pass=""
 gpg_name=""
-enable_ima=false
-sig_lists=""
+ima_key=""
+ima_pass=""
+rpm_dir=""
+spec_file=""
 sdk_native_dir=`env |grep OECORE_NATIVE_SYSROOT|cut -d= -f2`
-release_version=""
-pkg_version=""
 
-while getopts "dt:p:h:v:r:s:i:k:o:g:e:m:n:" FLAG; do
-    case $FLAG in
-        d)	if $debugging; then set -x; fi; debugging=true;;
-        t)	try="echo";;
-        s)	spec=$OPTARG;;
-        p)	rpm_name=$OPTARG;;
-        v)      pkg_version=$OPTARG;;
-        r)      release_version=$OPTARG;;
-        i)      install_dir=$OPTARG;;
-        o)      rpm_dir=$OPTARG;;
-        g)      gpg_key=$OPTARG;;
-	m)	ima_key=$OPTARG;;
-        n)      gpg_name=$OPTARG;;
-        h)      usage;;
-        \?)	usage;;
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --pkg-name)
+		pkg_name="$2"
+		shift
+		;;
+        --pkg-version)
+		pkg_version="$2"
+		shift
+		;;
+        --pkg-release)
+		pkg_release="$2"
+		shift
+		;;
+        --pkg-dir)
+		install_dir="$2"
+		shift
+		;;
+        --spec-file)
+		spec_file="$2"
+		shift
+		;;
+        --gpg-key)
+		gpg_key="$2"
+		shift
+		;;
+        --gpg-pass)
+		gpg_pass="$2"
+		shift
+		;;
+        --gpg-name)
+		gpg_name="$2"
+		shift
+		;;
+        --ima-key)
+		ima_key="$2"
+		shift
+		;;
+        --ima-pass)
+		ima_pass="$2"
+		shift
+		;;
+        --rpm-dir)
+		rpm_dir="$2"
+		shift
+		;;
+	--help)
+		usage
+		;;
+        *)
+		break
+		;;
+
     esac
+    shift
 done
-
-shift $((OPTIND - 1))
 
 ima_env_check(){
 	#enable IMA signing
 	if [ -n "$ima_key" -a -e "$ima_key" ]; then
 		file $ima_key | grep "private key" >/dev/null 2>&1
 		if [ $? != 0 ]; then
-			echo "The key is not an valid file, please specify a valid key."
+			echo "The key is not a valid file, please specify a valid key."
 			exit 1
-		fi
-
-		if [ ! -f "`which base64`" ]; then
-        		echo "Error: Can not find the command base64"
-	        	exit 1
 		fi
 
 		if [ ! -f "`which evmctl`" ]; then
@@ -88,12 +122,16 @@ ima_env_check(){
 }
 
 setup_env() {
-    # check if realpath is installed
-    which realpath>/dev/null
-    if [ $? != 0 ]; then
-	echo "realpath is not detected, please install it on your host..."
-	exit 1
-    fi
+    # check if required host pkgs are available
+    host_pkgs="realpath gpg createrepo"
+    for pkg in $host_pkgs
+    do
+	which $pkg >/dev/null
+	if [ $? != 0 ]; then
+	    echo "realpath is not detected, please install it on your host..."
+	    exit 1
+	fi
+    done
 
     if [ x$sdk_native_dir == x ]; then
 	# SDK env is not set
@@ -133,19 +171,19 @@ setup_env() {
 	exit 1
     fi
 
-    if [ x$spec == x ]; then
-	if [ x$rpm_name == x -o x$pkg_version == x -o x$release_version == x ]; then
+    if [ x$spec_file == x ]; then
+	if [ x$pkg_name == x -o x$pkg_version == x -o x$pkg_release == x ]; then
 	    echo "Missing package name, or package version or release version..."
 	    exit 1
 	fi
-    elif [ ! -e $spec ]; then
-	echo "expected spec file $spec is not available..."
+    elif [ ! -e $spec_file ]; then
+	echo "expected spec file $spec_file is not available..."
 	exit 1
     else
-        rpm_name=`cat ${spec} |grep ^Name |cut -d: -f 2 |sed -e  's/[[:space:]]//g'`
-        release_version=`cat ${spec} |grep ^Release |cut -d: -f 2 |sed -e  's/[[:space:]]//g'`
-        pkg_version=`cat ${spec} |grep ^Version |cut -d: -f 2 |sed -e 's/[[:space:]]//g'`
-	if [ x$rpm_name == x -o x$pkg_version == x -o x$release_version == x ]; then
+        pkg_name=`cat ${spec_file} |grep ^Name |cut -d: -f 2 |sed -e  's/[[:space:]]//g'`
+        pkg_release=`cat ${spec_file} |grep ^Release |cut -d: -f 2 |sed -e  's/[[:space:]]//g'`
+        pkg_version=`cat ${spec_file} |grep ^Version |cut -d: -f 2 |sed -e 's/[[:space:]]//g'`
+	if [ x$pkg_name == x -o x$pkg_version == x -o x$pkg_release == x ]; then
 	    echo "Can't retrieve correct package name, or package version or release version in spec file..."
 	    exit 1
 	fi
@@ -153,15 +191,15 @@ setup_env() {
 }
 
 function format_spec() {
-    echo "Summary: $rpm_name" > $spec
-    echo "Name: $rpm_name" >> $spec
-    echo "Version: $pkg_version" >> $spec
-    echo "Release: $release_version" >> $spec
-    echo "License: GPLv3" >> $spec
-    echo "Group: user/user" >> $spec
-    echo "%description" >> $spec
-    echo "$rpm_name" >> $spec
-    echo "%files" >> $spec
+    echo "Summary: $pkg_name" > $spec_file
+    echo "Name: $pkg_name" >> $spec_file
+    echo "Version: $pkg_version" >> $spec_file
+    echo "Release: $pkg_release" >> $spec_file
+    echo "License: GPLv3" >> $spec_file
+    echo "Group: user/user" >> $spec_file
+    echo "%description" >> $spec_file
+    echo "$pkg_name" >> $spec_file
+    echo "%files" >> $spec_file
 
     if [ ! -d $install_dir ]; then
 	echo "install directory doesn't exists!"
@@ -171,119 +209,66 @@ function format_spec() {
     for f in `find $install_dir`
     do
 	if [ -f $f ]; then
-	    echo "${f##*$install_dir}" >> $spec
-	    
-	    if $enable_ima ;then
-		debug "signing file $f......"
-		evmctl ima_sign -n --hashalgo sha256 --sigfile --key $ima_key $f >/dev/null 2>&1
-		if [ ! -e "${f}.sig" ]; then
-			echo "ERROR: IMA siging failed on file $f"
-			exit 1
-		fi
-		sig_lists="`base64 ${f}.sig`|${f##*$install_dir}&${sig_lists}"
-		rm -rf ${f}.sig
-	    fi
-	    
+	    echo "${f##*$install_dir}" >> $spec_file
 	fi
     done
 
-    if [ -n "$sig_lists" ]; then
-	        cat >>$spec  <<EOF
-%post
-#!/bin/sh
-
-# %post hook for IMA appraisal
-
-sig_lists="$sig_lists"
-
-do_sign(){
-        saved_IFS="\$IFS"
-        IFS="&"
-        siglists="\$1"
-        for entry in \${siglists}; do
-                IFS="|"
-                
-                tokens=""
-                for token in \$entry; do
-                        tokens="\$tokens\$token|"
-                done
-
-                for sig in \$tokens;do
-                        break
-                done
-
-                IFS="\$saved_IFS"
-                
-                f="\$token"
-
-                setfattr.static -n security.ima -v "0s\$sig" "\$f" || {
-                        err=\$?
-                        echo "Unable to set up security.ima for \$f (err: \$err)"
-                }
-                
-                IFS="&"
-
-        done
-}
-
-do_sign "\$sig_lists"
-EOF
-
-	
-    fi
 }
 
 function generate_rpm() {
-    if [  x$spec == x ]; then
-        if [ x$rpm_name == x -o x$pkg_version == x -o x$release_version == x ]; then
+    if [  x$spec_file == x ]; then
+        if [ x$pkg_name == x -o x$pkg_version == x -o x$pkg_release == x ]; then
 	    echo "Missing rpm name or package version or release version..."
 	    exit 1
 	else
-	    spec=`mktemp /tmp/${rpm_name}.spec.XXXXX`
-	    echo "Creating new spec file $spec..."
+	    spec_file=`mktemp /tmp/${pkg_name}.spec.XXXXX`
+	    echo "Creating new spec file $spec_file..."
             echo "Please save it and you can customize your own spec based on it ..."
             format_spec
 	fi
     else
-	echo "spec file: $spec"
+	echo "spec file: $spec_file"
     fi
 
     if [ x$sdk_dir == x ]; then
 	echo "Missing SDK directory..."
     else
-	magic_path=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/usr/share/misc/magic.mgc
-
 	# create the output directory if it is not available
 	if [ ! -e ${rpm_dir} ]; then
 	    mkdir -p ${rpm_dir}
 	fi
-
+	export MAGIC=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/usr/share/misc/magic.mgc
+	export RPM_CONFIGDIR=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/usr/lib/rpm
 	# generate rpm
 	rpmbuild_bin=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/usr/bin/rpmbuild
-
-	${rpmbuild_bin} --nodeps --short-circuit --target ${ARCH}-wrs-linux --buildroot $install_dir \
-	         --define "_rpmdir {$rpm_dir}" \
-		 --define '_build_name_fmt %%{NAME}-%%{VERSION}-%%{RELEASE}.%%{ARCH}.rpm' \
-		 --define '_use_internal_dependency_generator 0' \
-		 --define '__find_requires %{nil}' \
-                 --define '__find_provides %{nil}' \
-		 --define '_unpackaged_files_terminate_build 0' \
-		 --define 'debug_package %{nil}' \
-		 --define "_rpmfc_magic_path {$magic_path}" \
-		 --bb $spec --quiet > /dev/null
+	$rpmbuild_bin --noclean --nodeps --short-circuit --target ${ARCH}-wrs-linux \
+		   --buildroot ${install_dir} \
+		   --define '_rpmdir '${rpm_dir}'' \
+		   --define '_build_name_fmt %%{NAME}-%%{VERSION}-%%{RELEASE}.%%{ARCH}.rpm' \
+		   --define '_use_internal_dependency_generator 0' \
+		   --define '_binaries_in_noarch_packages_terminate_build 0' \
+		   --define '_build_id_links none' \
+		   --define '_binary_payload w6T.xzdio' \
+		   --define '_source_payload w6T.xzdio' \
+		   --define '__find_requires %{nil}' \
+		   --define '__find_provides %{nil}' \
+		   --define '_unpackaged_files_terminate_build 0' \
+		   --define 'debug_package %{nil}' \
+		   -bb ${spec_file} --quiet > /dev/null
     fi
 }
 function create_repo() {
-    $sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/usr/bin/createrepo ${rpm_dir}
+    createrepo ${rpm_dir}
 }
 function sign_rpm() {
     if [ x$sdk_dir == x ]; then
 	echo "please specify sdk root"
     else
 	gpg_home=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/etc/gpg
-	gpg_bin=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/usr/bin/gpg
+	gpg_bin=`which gpg`
 	rpm_bin=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/usr/bin/rpm
-	rpm_file=${rpm_dir}/${rpm_name}-${pkg_version}-${release_version}.${ARCH}.rpm
+	rpm_file=${rpm_dir}/${pkg_name}-${pkg_version}-${pkg_release}.${ARCH}.rpm
+	rpm_sign_bin=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/usr/bin/rpmsign
 	
         # import gpg key
 	if [ ! -e $gpg_home ]; then
@@ -309,10 +294,14 @@ function sign_rpm() {
             fi
         fi 
 	# sign the rpm
-	${rpm_bin} --addsign --define "__gpg $gpg_bin" \
-	           --define "_gpg_path $gpg_home" \
-	           --define  "_gpg_name $gpg_name" \
-	           ${rpm_file}	
+	${rpm_sign_bin} --addsign --define "__gpg $gpg_bin" \
+			--define "_gpg_path $gpg_home" \
+			--define  "_gpg_name $gpg_name" \
+			--define "_gpg_sign_cmd_extra_args --no-permission-warning --batch --passphrase=$gpg_pass" \
+			--define "_binary_filedigest_algorithm 8" \
+			--signfiles --fskpath $ima_key \
+			--define "_file_signing_key_password $ima_pass" \
+			${rpm_file} --quiet > /dev/null
     fi
 }
 
