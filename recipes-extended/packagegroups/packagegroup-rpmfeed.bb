@@ -39,6 +39,7 @@ WRL_RPM_FEED_EXTRAS_intel-corei7-64 += " \
     dpdk \
     dpdk-examples \
     sensors-demo \
+    lms8 \
 "
 
 #
