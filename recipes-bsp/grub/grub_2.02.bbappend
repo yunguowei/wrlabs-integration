@@ -11,7 +11,7 @@ ALTERNATIVE_${PN} = "grub-fstest grub-menulst2cfg grub-mkimage \
 
 ALTERNATIVE_grub-editenv = "grub-editenv"
 
-FILES_grub-editenv += "${bindir}/grub-editenv.grub"
+FILES_${PN}-editenv = "${bindir}/grub-editenv ${bindir}/grub-editenv.grub"
 
 ALTERNATIVE_LINK_NAME[grub-editenv] = "${bindir}/grub-editenv"
 ALTERNATIVE_LINK_NAME[grub-fstest] = "${bindir}/grub-fstest"
