@@ -11,6 +11,7 @@ usage() {
     echo >&2 "usage: ${0##*/} <option> "
     echo >&2 "The rpm will be named as <package name>-<package version>-<release-version>.core2_64.rpm"
     echo >&2 "   options are following:"
+    echo >&2 "   --pkg-sign Package and sign the user installed utilities with IMA and GPG key."
     echo >&2 "   --spec-file specify the spec file, if it is omitted, the spec will be auto generated."
     echo >&2 "   --pkg-name specify the application name, which is also the basename of the generated rpm."
     echo >&2 "   --pkg-version specify the application version."
@@ -22,6 +23,8 @@ usage() {
     echo >&2 "   --ima-key The IMA private key file for IMA signing."
     echo >&2 "   --ima-pass IMA key password"
     echo >&2 "   --rpm-dir The output directory, where the package is generated."
+    echo >&2 "   --sign-repo Sign/Resign the whole repo with IMA and GPG key."
+    echo >&2 "   --repo-dir The repo directory to be signed."
     exit 1
 }
 
@@ -33,6 +36,7 @@ export debugging
 try=""
 export try
 
+pkg_sign=0
 pkg_name=""
 pkg_version=""
 pkg_release=""
@@ -45,9 +49,22 @@ ima_pass=""
 rpm_dir=""
 spec_file=""
 sdk_native_dir=`env |grep OECORE_NATIVE_SYSROOT|cut -d= -f2`
+repo_sign=0
+repo_dir=""
+enable_ima=0
 
 while [ $# -gt 0 ]; do
     case "$1" in
+        --pkg-sign)
+		pkg_sign=1
+		;;
+        --repo-sign)
+		repo_sign=1
+		;;
+        --repo-dir)
+		repo_dir="$2"
+		shift
+		;;
         --pkg-name)
 		pkg_name="$2"
 		shift
@@ -112,12 +129,7 @@ ima_env_check(){
 			exit 1
 		fi
 
-		if [ ! -f "`which evmctl`" ]; then
-        		echo "Error: Can not find the command evmctl"
-        		exit 1
-		fi
-		
-		enable_ima=true
+		enable_ima=1
 	fi
 }
 
@@ -128,11 +140,14 @@ setup_env() {
     do
 	which $pkg >/dev/null
 	if [ $? != 0 ]; then
-	    echo "realpath is not detected, please install it on your host..."
+	    echo "$pkg is not detected, please install it on your host..."
 	    exit 1
 	fi
     done
 
+    ima_env_check
+
+    #setup generic variables: sdk,rpm,gpg,etc
     if [ x$sdk_native_dir == x ]; then
 	# SDK env is not set
 	echo "Setting SDK environment..."
@@ -146,46 +161,81 @@ setup_env() {
 	# SDK env is already set
 	sdk_dir=$sdk_native_dir/../../
     fi
+    export MAGIC=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/usr/share/misc/magic.mgc
+    export RPM_CONFIGDIR=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/usr/lib/rpm
 
-    if [ x$install_dir == x ]; then
-	echo "Please specify application install directory ..."
-	exit 1
+    gpg_home=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/etc/gpg
+    gpg_bin=`which gpg`
+    rpm_sign_bin=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/usr/bin/rpmsign
+
+    # import gpg key
+    if [ ! -e $gpg_home ]; then
+        mkdir -p $gpg_home
+    fi
+
+    # check if the gpg key is available
+    ${gpg_bin} --no-permission-warning --homedir $gpg_home --list-keys -a  |grep $gpg_name
+    if [ $? == 0 ]; then
+        debug "gpg key is available..."
+    elif [ x${gpg_key} == x ]; then
+        echo "Missing gpg key file for ${gpg_name}..."
+        exit 1
+    elif [ ! -e ${gpg_key} ]; then
+        echo "Specified GPG key file ${gpg_key} doesn't exist..."
+        exit 1
     else
-	install_dir=`realpath $install_dir`
+        ${gpg_bin} --homedir $gpg_home --import $gpg_key
+	${gpg_bin} --no-permission-warning --homedir $gpg_home --list-keys -a  |grep $gpg_name
+        if [ $? != 0 ]; then
+            echo "$gpg_name is not found in keyring..."
+            exit 1
+        fi
     fi
 
-    if [ ! -d $install_dir ]; then
-	echo "Application install directory doesn't exist..."
-	exit 1
-    fi
-
-    if [ x$rpm_dir == x ]; then
-	echo "Please specify RPM repo directory ..."
-	exit 1
-    else
-	rpm_dir=`realpath $rpm_dir`
-    fi
-
-    if [ ! -d $rpm_dir ]; then
-	echo "RPM repo directory doesn't exist..."
-	exit 1
-    fi
-
-    if [ x$spec_file == x ]; then
-	if [ x$pkg_name == x -o x$pkg_version == x -o x$pkg_release == x ]; then
-	    echo "Missing package name, or package version or release version..."
+    # setup variables for packaging and signing
+    if [ $pkg_sign -eq 1 ]; then
+	rpmbuild_bin=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/usr/bin/rpmbuild
+        rpm_file=${rpm_dir}/${pkg_name}-${pkg_version}-${pkg_release}.${ARCH}.rpm
+	if [ x$install_dir == x ]; then
+	    echo "Please specify application install directory ..."
 	    exit 1
+        else
+	    install_dir=`realpath $install_dir`
+        fi
+
+	if [ ! -d $install_dir ]; then
+	    echo "Application install directory doesn't exist..."
+	    exit 1
+        fi
+
+	if [ x$rpm_dir == x ]; then
+	    echo "Please specify RPM repo directory ..."
+	    exit 1
+	else
+	    rpm_dir=`realpath $rpm_dir`
 	fi
-    elif [ ! -e $spec_file ]; then
-	echo "expected spec file $spec_file is not available..."
-	exit 1
-    else
-        pkg_name=`cat ${spec_file} |grep ^Name |cut -d: -f 2 |sed -e  's/[[:space:]]//g'`
-        pkg_release=`cat ${spec_file} |grep ^Release |cut -d: -f 2 |sed -e  's/[[:space:]]//g'`
-        pkg_version=`cat ${spec_file} |grep ^Version |cut -d: -f 2 |sed -e 's/[[:space:]]//g'`
-	if [ x$pkg_name == x -o x$pkg_version == x -o x$pkg_release == x ]; then
-	    echo "Can't retrieve correct package name, or package version or release version in spec file..."
+
+	# create the output directory if it is not available
+	if [ ! -e ${rpm_dir} ]; then
+	    mkdir -p ${rpm_dir}
+	fi
+
+	if [ x$spec_file == x ]; then
+	    if [ x$pkg_name == x -o x$pkg_version == x -o x$pkg_release == x ]; then
+		echo "Missing package name, or package version or release version..."
+		exit 1
+	    fi
+	elif [ ! -e $spec_file ]; then
+	    echo "expected spec file $spec_file is not available..."
 	    exit 1
+	else
+	    pkg_name=`cat ${spec_file} |grep ^Name |cut -d: -f 2 |sed -e  's/[[:space:]]//g'`
+            pkg_release=`cat ${spec_file} |grep ^Release |cut -d: -f 2 |sed -e  's/[[:space:]]//g'`
+            pkg_version=`cat ${spec_file} |grep ^Version |cut -d: -f 2 |sed -e 's/[[:space:]]//g'`
+	    if [ x$pkg_name == x -o x$pkg_version == x -o x$pkg_release == x ]; then
+		echo "Can't retrieve correct package name, or package version or release version in spec file..."
+		exit 1
+	    fi
 	fi
     fi
 }
@@ -230,18 +280,9 @@ function generate_rpm() {
 	echo "spec file: $spec_file"
     fi
 
-    if [ x$sdk_dir == x ]; then
-	echo "Missing SDK directory..."
-    else
-	# create the output directory if it is not available
-	if [ ! -e ${rpm_dir} ]; then
-	    mkdir -p ${rpm_dir}
-	fi
-	export MAGIC=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/usr/share/misc/magic.mgc
-	export RPM_CONFIGDIR=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/usr/lib/rpm
-	# generate rpm
-	rpmbuild_bin=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/usr/bin/rpmbuild
-	$rpmbuild_bin --noclean --nodeps --short-circuit --target ${ARCH}-wrs-linux \
+    # generate rpm
+    rpmbuild_bin=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/usr/bin/rpmbuild
+    $rpmbuild_bin --noclean --nodeps --short-circuit --target ${ARCH}-wrs-linux \
 		   --buildroot ${install_dir} \
 		   --define '_rpmdir '${rpm_dir}'' \
 		   --define '_build_name_fmt %%{NAME}-%%{VERSION}-%%{RELEASE}.%%{ARCH}.rpm' \
@@ -255,46 +296,18 @@ function generate_rpm() {
 		   --define '_unpackaged_files_terminate_build 0' \
 		   --define 'debug_package %{nil}' \
 		   -bb ${spec_file} --quiet > /dev/null
-    fi
-}
-function create_repo() {
-    createrepo ${rpm_dir}
-}
-function sign_rpm() {
-    if [ x$sdk_dir == x ]; then
-	echo "please specify sdk root"
-    else
-	gpg_home=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/etc/gpg
-	gpg_bin=`which gpg`
-	rpm_bin=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/usr/bin/rpm
-	rpm_file=${rpm_dir}/${pkg_name}-${pkg_version}-${pkg_release}.${ARCH}.rpm
-	rpm_sign_bin=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/usr/bin/rpmsign
-	
-        # import gpg key
-	if [ ! -e $gpg_home ]; then
-            mkdir -p $gpg_home
-	fi
 
-	# check if the gpg key is available
-	${gpg_bin} --no-permission-warning --homedir $gpg_home --list-keys -a  |grep $gpg_name
-	if [ $? == 0 ]; then
-	    debug "gpg key is available..."
-        elif [ x${gpg_key} == x ]; then
-	    echo "Missing gpg key file for ${gpg_name}..."
-	    exit 1
-        elif [ ! -e ${gpg_key} ]; then
-            echo "Specified GPG key file ${gpg_key} doesn't exist..."
-            exit 1
-        else
-            ${gpg_bin} --homedir $gpg_home --import $gpg_key
-	    ${gpg_bin} --no-permission-warning --homedir $gpg_home --list-keys -a  |grep $gpg_name
-	    if [ $? != 0 ]; then
-                echo "$gpg_name is not found in keyring..."
-                exit 1
-            fi
-        fi 
-	# sign the rpm
-	${rpm_sign_bin} --addsign --define "__gpg $gpg_bin" \
+}
+
+function create_repo() {
+    createrepo --update --quiet $1
+}
+
+function sign_rpm() {
+	rpm_file=$1
+	echo "signing $rpm_file"
+	if [ $enable_ima -eq 1 ]; then
+		${rpm_sign_bin} --addsign --define "__gpg $gpg_bin" \
 			--define "_gpg_path $gpg_home" \
 			--define  "_gpg_name $gpg_name" \
 			--define "_gpg_sign_cmd_extra_args --no-permission-warning --batch --passphrase=$gpg_pass" \
@@ -302,16 +315,35 @@ function sign_rpm() {
 			--signfiles --fskpath $ima_key \
 			--define "_file_signing_key_password $ima_pass" \
 			${rpm_file} --quiet > /dev/null
-    fi
+	else
+		${rpm_sign_bin} --addsign --define "__gpg $gpg_bin" \
+			--define "_gpg_path $gpg_home" \
+			--define  "_gpg_name $gpg_name" \
+			--define "_gpg_sign_cmd_extra_args --no-permission-warning --batch --passphrase=$gpg_pass" \
+			${rpm_file} --quiet > /dev/null
+	fi
+
 }
 
+function sign_repo() {
+	for file in `find ${repo_dir} -name *.rpm`; do
+	   sign_rpm $file
+	done
+
+	create_repo ${repo_dir}
+}
 
 setup_env
-ima_env_check
-generate_rpm
 
-if [ "x$gpg_name" != "x" ]; then
-    sign_rpm
+if [ $pkg_sign -eq 1 ]; then
+    generate_rpm
+
+    if [ "x$gpg_name" != "x" ]; then
+        sign_rpm ${rpm_file}
+	create_repo ${rpm_dir}
+    fi
 fi
- 
-create_repo
+
+if [ $repo_sign -eq 1 ]; then
+    sign_repo
+fi
