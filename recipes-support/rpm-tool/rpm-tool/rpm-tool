@@ -23,8 +23,9 @@ usage() {
     echo >&2 "   --ima-key The IMA private key file for IMA signing."
     echo >&2 "   --ima-pass IMA key password"
     echo >&2 "   --rpm-dir The output directory, where the package is generated."
-    echo >&2 "   --sign-repo Sign/Resign the whole repo with IMA and GPG key."
+    echo >&2 "   --repo-sign Sign/Resign the whole repo with IMA and GPG key."
     echo >&2 "   --repo-dir The repo directory to be signed."
+    echo >&2 "   --pkg-arch The architecture of the package."
     exit 1
 }
 
@@ -52,6 +53,7 @@ sdk_native_dir=`env |grep OECORE_NATIVE_SYSROOT|cut -d= -f2`
 repo_sign=0
 repo_dir=""
 enable_ima=0
+pkg_arch="noarch"
 
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -109,7 +111,11 @@ while [ $# -gt 0 ]; do
 		rpm_dir="$2"
 		shift
 		;;
-	--help)
+        --pkg-arch)
+		pkg_arch="$2"
+		shift
+		;;
+	--help|-h)
 		usage
 		;;
         *)
@@ -195,7 +201,7 @@ setup_env() {
     # setup variables for packaging and signing
     if [ $pkg_sign -eq 1 ]; then
 	rpmbuild_bin=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/usr/bin/rpmbuild
-        rpm_file=${rpm_dir}/${pkg_name}-${pkg_version}-${pkg_release}.${ARCH}.rpm
+        rpm_file=${rpm_dir}/${pkg_name}-${pkg_version}-${pkg_release}.${pkg_arch}.rpm
 	if [ x$install_dir == x ]; then
 	    echo "Please specify application install directory ..."
 	    exit 1
@@ -282,7 +288,7 @@ function generate_rpm() {
 
     # generate rpm
     rpmbuild_bin=$sdk_dir/sysroots/x86_64-wrlinuxsdk-linux/usr/bin/rpmbuild
-    $rpmbuild_bin --noclean --nodeps --short-circuit --target ${ARCH}-wrs-linux \
+    $rpmbuild_bin --noclean --nodeps --short-circuit --target ${pkg_arch}-wrs-linux \
 		   --buildroot ${install_dir} \
 		   --define '_rpmdir '${rpm_dir}'' \
 		   --define '_build_name_fmt %%{NAME}-%%{VERSION}-%%{RELEASE}.%%{ARCH}.rpm' \
