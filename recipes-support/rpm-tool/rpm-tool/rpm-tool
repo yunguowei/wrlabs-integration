@@ -23,8 +23,9 @@ usage() {
     echo >&2 "   --ima-key The IMA private key file for IMA signing."
     echo >&2 "   --ima-pass IMA key password"
     echo >&2 "   --rpm-dir The output directory, where the package is generated."
-    echo >&2 "   --sign-repo Sign/Resign the whole repo with IMA and GPG key."
+    echo >&2 "   --repo-sign Sign/Resign the whole repo with IMA and GPG key."
     echo >&2 "   --repo-dir The repo directory to be signed."
+    echo >&2 "   --pkg-arch The architecture of the package."
     exit 1
 }
 
@@ -114,7 +115,7 @@ while [ $# -gt 0 ]; do
 		pkg_arch="$2"
 		shift
 		;;
-	--help)
+	--help|-h)
 		usage
 		;;
         *)
