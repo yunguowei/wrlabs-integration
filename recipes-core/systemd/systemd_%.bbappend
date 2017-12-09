@@ -1,1 +1,3 @@
-CONFFILES_${PN} += "${sysconfdir}/systemd/system/getty.target.wants/getty@tty1.service"
+do_install_append(){
+	sed -i 's/^\(ConditionPathExists=\)/#\1/'  ${D}${systemd_unitdir}/system/getty@.service
+}
