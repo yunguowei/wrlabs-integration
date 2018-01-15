@@ -1,0 +1,30 @@
+From 87cfdc99429df6f1486be7d5e0344c64ff1c2a06 Mon Sep 17 00:00:00 2001
+From: Yunguo Wei <yunguo.wei@windriver.com>
+Date: Thu, 18 Jan 2018 16:36:23 +0800
+Subject: [PATCH 3/5] rsi: Fix build error
+
+wow_flag is not present if CONFIG_RSI_WOW is not enabled.
+
+Signed-off-by: Yunguo Wei <yunguo.wei@windriver.com>
+---
+ drivers/net/wireless/rsi/rsi_91x_mac80211.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/net/wireless/rsi/rsi_91x_mac80211.c b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
+index 3c7fa2d..9785969 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_mac80211.c
++++ b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
+@@ -2110,8 +2110,10 @@ static void rsi_mac80211_sw_scan_start(struct ieee80211_hw *hw,
+ 	if (common->fsm_state != FSM_MAC_INIT_DONE)
+ 		return;
+ 
++#ifdef CONFIG_RSI_WOW
+ 	if (common->wow_flags & RSI_WOW_ENABLED)
+ 		return;
++#endif
+ 
+ 	if (common->p2p_enabled)
+ 		return;
+-- 
+2.7.4
+

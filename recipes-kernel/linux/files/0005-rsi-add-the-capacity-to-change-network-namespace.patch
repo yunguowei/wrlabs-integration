@@ -1,0 +1,28 @@
+From b2ce02a28f4f1bc177926cc977695daa429db3ee Mon Sep 17 00:00:00 2001
+From: Yunguo Wei <yunguo.wei@windriver.com>
+Date: Thu, 18 Jan 2018 16:56:30 +0800
+Subject: [PATCH 5/5] rsi: add the capacity to change network namespace
+
+With this flag, the device can be changed to a non-root network device.
+
+Signed-off-by: Yunguo Wei <yunguo.wei@windriver.com>
+---
+ drivers/net/wireless/rsi/rsi_91x_mac80211.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/rsi/rsi_91x_mac80211.c b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
+index 9785969..a95d357 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_mac80211.c
++++ b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
+@@ -2896,7 +2896,7 @@ int rsi_mac80211_attach(struct rsi_common *common)
+ #endif	
+ 	/* AP Parameters */
+ 	wiphy->flags = WIPHY_FLAG_REPORTS_OBSS;
+-	wiphy->flags |= WIPHY_FLAG_AP_UAPSD;
++	wiphy->flags |= WIPHY_FLAG_AP_UAPSD | WIPHY_FLAG_NETNS_OK;
+ 	wiphy->features |= NL80211_FEATURE_INACTIVITY_TIMER;
+ 
+ 	/*wiphy->regulatory_flags = (REGULATORY_STRICT_REG |
+-- 
+2.7.4
+

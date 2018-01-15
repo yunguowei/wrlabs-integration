@@ -12,6 +12,11 @@ SRC_URI += "${EXTRASRCZYNQ} \
 	file://extra-kernel-feature.scc \
 	file://0001-mwifiex-allow-using-network-namespaces.patch \
 	file://0001-iwlwifi-disable-the-noisy-warning-on-intel-7260-card.patch \
+	file://0001-rsi-Uprev-to-1.3-RC9.patch \
+	file://0002-rsi-mac80211-Pass-new-RSSI-level-in-CQM-RSSI-notific.patch \
+	file://0003-rsi-Fix-build-error.patch \
+	file://0004-rsi-use-kmalloc-mem-for-usb-msg-buffer.patch \
+	file://0005-rsi-add-the-capacity-to-change-network-namespace.patch \
 "
 
 KBRANCH_xilinx-zynq = "standard/${MACHINE}"
@@ -50,6 +55,9 @@ KERNEL_EXTRA_ARGS_fsl-ls10xx += "LOADADDR=0x80008000"
 #after a long time without no interaction on computestick.
 KERNEL_MODULE_PROBECONF += "iwlmvm"
 module_conf_iwlmvm = "options iwlmvm power_scheme=1"
+
+KERNEL_MODULE_PROBECONF += "rsi_usb"
+module_conf_rsi_usb = "options rsi_usb dev_oper_mode=14"
 
 # Combine all linux kernel modules into one rpm package
 inherit kernel-module-combine

@@ -1,0 +1,29 @@
+From 2cfa4b9bf2d0d516523223aa7a903ce1b2cc3cd2 Mon Sep 17 00:00:00 2001
+From: Yunguo Wei <yunguo.wei@windriver.com>
+Date: Thu, 18 Jan 2018 16:33:33 +0800
+Subject: [PATCH 2/5] rsi/mac80211: Pass new RSSI level in CQM RSSI
+ notification
+
+Adapt new API due to 769f07d8f0f.
+
+Signed-off-by: Yunguo Wei <yunguo.wei@windriver.com>
+---
+ drivers/net/wireless/rsi/rsi_91x_mac80211.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/rsi/rsi_91x_mac80211.c b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
+index 793a7a4..3c7fa2d 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_mac80211.c
++++ b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
+@@ -1749,7 +1749,7 @@ static void rsi_perform_cqm(struct rsi_common *common,
+ 	rsi_dbg(INFO_ZONE, "CQM: Notifying event: %s\n",
+ 		(event == NL80211_CQM_RSSI_THRESHOLD_EVENT_LOW) ? "LOW" : "HIGH");
+ 	ieee80211_cqm_rssi_notify(adapter->vifs[adapter->sc_nvifs - 1],
+-				  event, GFP_KERNEL);
++				  event, rssi, GFP_KERNEL);
+ }
+ 
+ void rsi_indicate_bcnmiss(struct rsi_common *common)
+-- 
+2.7.4
+
