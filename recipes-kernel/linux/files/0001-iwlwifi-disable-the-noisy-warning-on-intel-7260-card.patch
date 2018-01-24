@@ -1,7 +1,7 @@
-From 2eb14689842b57ea2f5ab15a3faa6e270e8bfd7c Mon Sep 17 00:00:00 2001
+From 3ef3e13db0d40d79a29af1f10cbcfd760081262a Mon Sep 17 00:00:00 2001
 From: Fupan Li <fupan.li@windriver.com>
 Date: Wed, 20 Dec 2017 07:14:04 +0000
-Subject: [PATCH] iwlwifi: disable the noisy warning on intel 7260 card
+Subject: [PATCH 2/2] iwlwifi: disable the noisy warning on intel 7260 card
 
 Signed-off-by: Fupan Li <fupan.li@windriver.com>
 ---
@@ -9,28 +9,28 @@ Signed-off-by: Fupan Li <fupan.li@windriver.com>
  1 file changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tx.c b/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
-index 6e66d90..6f550c8 100644
+index ef71a73..bee5d21 100644
 --- a/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
 +++ b/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
-@@ -555,8 +555,8 @@ static int iwl_mvm_get_ctrl_vif_queue(struct iwl_mvm *mvm,
+@@ -580,8 +580,8 @@ static int iwl_mvm_get_ctrl_vif_queue(struct iwl_mvm *mvm,
  		if (info->hw_queue == info->control.vif->cab_queue)
- 			return info->hw_queue;
+ 			return mvmvif->cab_queue;
  
 -		WARN_ONCE(info->control.vif->type != NL80211_IFTYPE_ADHOC,
 -			  "fc=0x%02x", le16_to_cpu(fc));
-+//		WARN_ONCE(info->control.vif->type != NL80211_IFTYPE_ADHOC,
-+//			  "fc=0x%02x", le16_to_cpu(fc));
++		//WARN_ONCE(info->control.vif->type != NL80211_IFTYPE_ADHOC,
++		//	  "fc=0x%02x", le16_to_cpu(fc));
  		return mvm->probe_queue;
  	case NL80211_IFTYPE_P2P_DEVICE:
  		if (ieee80211_is_mgmt(fc))
-@@ -1357,7 +1357,9 @@ static void iwl_mvm_rx_tx_cmd_single(struct iwl_mvm *mvm,
- 			/* In DQA, the FW should have stopped the queue and not
+@@ -1360,7 +1360,9 @@ static void iwl_mvm_rx_tx_cmd_single(struct iwl_mvm *mvm,
+ 			/* the FW should have stopped the queue and not
  			 * return this status
  			 */
--			WARN_ON(iwl_mvm_is_dqa_supported(mvm));
+-			WARN_ON(1);
 +                        /*The intel 7260's firmware had a defect which will return this
-+                         * this staus, thus disabel this noisy warning */
-+			// WARN_ON(iwl_mvm_is_dqa_supported(mvm));
++                        * this staus, thus disabel this noisy warning */
++                        //WARN_ON(1);
  			info->flags |= IEEE80211_TX_STAT_TX_FILTERED;
  			break;
  		default:

@@ -1,7 +1,7 @@
-From 176ad7fde4aec9b85fc5a15a4097e52035f4f6e6 Mon Sep 17 00:00:00 2001
+From c1cffd13a77cafd6ca1c990b9a3a2e89bc388e31 Mon Sep 17 00:00:00 2001
 From: fli <fupan.li@windriver.com>
 Date: Wed, 14 Dec 2016 21:59:10 -0800
-Subject: [PATCH] mwifiex: allow using network namespaces
+Subject: [PATCH 1/2] mwifiex: allow using network namespaces
 
 This finally opens up the ability to put mwifiex
 wiphy device into different network namespaces, just
@@ -9,16 +9,21 @@ as the other mac80211 devices did.
 
 Signed-off-by: fli <fupan.li@windriver.com>
 ---
- drivers/net/wireless/marvell/mwifiex/cfg80211.c |    1 +
+ drivers/net/wireless/marvell/mwifiex/cfg80211.c | 1 +
  1 file changed, 1 insertion(+)
 
+diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+index 9e6b55b..21b8892 100644
 --- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
 +++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-@@ -4266,6 +4266,7 @@ int mwifiex_register_cfg80211(struct mwi
- 			WIPHY_FLAG_SUPPORTS_SCHED_SCAN |
+@@ -4298,6 +4298,7 @@ int mwifiex_register_cfg80211(struct mwifiex_adapter *adapter)
+ 			WIPHY_FLAG_AP_UAPSD |
  			WIPHY_FLAG_HAS_REMAIN_ON_CHANNEL |
  			WIPHY_FLAG_HAS_CHANNEL_SWITCH |
 +			WIPHY_FLAG_NETNS_OK |
  			WIPHY_FLAG_PS_ON_BY_DEFAULT;
  
  	if (ISSUPP_TDLS_ENABLED(adapter->fw_cap_info))
+-- 
+2.7.4
+
