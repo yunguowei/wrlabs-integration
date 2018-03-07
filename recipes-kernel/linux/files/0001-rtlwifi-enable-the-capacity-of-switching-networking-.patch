@@ -1,0 +1,27 @@
+From 71b5adec0df6d0dfa3b2fbd32426848b03b64db4 Mon Sep 17 00:00:00 2001
+From: Yunguo Wei <yunguo.wei@windriver.com>
+Date: Fri, 9 Mar 2018 10:02:47 +0800
+Subject: [PATCH] rtlwifi: enable the capacity of switching networking
+ namespace
+
+Signed-off-by: Yunguo Wei <yunguo.wei@windriver.com>
+---
+ drivers/net/wireless/realtek/rtlwifi/base.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/net/wireless/realtek/rtlwifi/base.c b/drivers/net/wireless/realtek/rtlwifi/base.c
+index bdc3791..6ec35ba 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/base.c
++++ b/drivers/net/wireless/realtek/rtlwifi/base.c
+@@ -416,6 +416,8 @@ static void _rtl_init_mac80211(struct ieee80211_hw *hw)
+ 
+ 	hw->wiphy->flags |= WIPHY_FLAG_HAS_REMAIN_ON_CHANNEL;
+ 
++	hw->wiphy->flags |= WIPHY_FLAG_NETNS_OK;
++
+ 	hw->wiphy->rts_threshold = 2347;
+ 
+ 	hw->queues = AC_MAX;
+-- 
+2.7.4
+

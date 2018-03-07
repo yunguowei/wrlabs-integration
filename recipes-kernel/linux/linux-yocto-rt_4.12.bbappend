@@ -14,6 +14,7 @@ SRC_URI += "${EXTRASRCZYNQ} \
 	file://0001-iwlwifi-disable-the-noisy-warning-on-intel-7260-card.patch \
 	file://0001-rsi-uprev-to-1.3.patch \
 	file://0002-rsi-add-the-capacity-to-change-network-namespace.patch \
+	file://0001-rtlwifi-enable-the-capacity-of-switching-networking-.patch \
 "
 
 KBRANCH_xilinx-zynq = "standard/${MACHINE}"
