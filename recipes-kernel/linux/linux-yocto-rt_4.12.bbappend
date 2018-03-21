@@ -10,6 +10,7 @@ KBRANCH_intel-corei7-64 = "standard/base"
 
 SRC_URI += "${EXTRASRCZYNQ} \
 	file://extra-kernel-feature.scc \
+	file://l2tp.scc \
 	file://0001-mwifiex-allow-using-network-namespaces.patch \
 	file://0001-iwlwifi-disable-the-noisy-warning-on-intel-7260-card.patch \
 	file://0001-rsi-uprev-to-1.3.patch \
