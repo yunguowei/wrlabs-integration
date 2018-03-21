@@ -28,6 +28,7 @@ RDEPENDS_${PN} = "\
     packagegroup-cloud-aws \
     packagegroup-cloud-azure \
     strongswan \
+    xl2tpd \
 "
 
 # If using meta-gateway add nodejs and mosquitto
