@@ -1,0 +1,2 @@
+# Support PPTP feature
+kconf non-hardware pptp.cfg
