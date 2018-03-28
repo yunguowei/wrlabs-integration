@@ -1,0 +1,16 @@
+ipcp-accept-local
+ipcp-accept-remote
+noccp
+idle 1800
+proxyarp
+connect-delay 5000
+require-mschap-v2
+ms-dns 8.8.4.4
+lcp-echo-interval 0
+lcp-echo-failure 0
+noauth
+refuse-pap
+refuse-eap
+refuse-mschap
+debug
+logfile /var/log/xl2tpd.log

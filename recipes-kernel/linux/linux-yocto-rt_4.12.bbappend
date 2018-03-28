@@ -10,8 +10,13 @@ KBRANCH_intel-corei7-64 = "standard/base"
 
 SRC_URI += "${EXTRASRCZYNQ} \
 	file://extra-kernel-feature.scc \
+	file://l2tp.scc \
+	file://pptp.scc \
 	file://0001-mwifiex-allow-using-network-namespaces.patch \
 	file://0001-iwlwifi-disable-the-noisy-warning-on-intel-7260-card.patch \
+	file://0001-rsi-uprev-to-1.3.patch \
+	file://0002-rsi-add-the-capacity-to-change-network-namespace.patch \
+	file://0001-rtlwifi-enable-the-capacity-of-switching-networking-.patch \
 "
 
 KBRANCH_xilinx-zynq = "standard/${MACHINE}"
@@ -51,5 +56,7 @@ KERNEL_EXTRA_ARGS_fsl-ls10xx += "LOADADDR=0x80008000"
 KERNEL_MODULE_PROBECONF += "iwlmvm"
 module_conf_iwlmvm = "options iwlmvm power_scheme=1"
 
+KERNEL_MODULE_PROBECONF += "rsi_usb"
+module_conf_rsi_usb = "options rsi_usb dev_oper_mode=14"
 # Combine all linux kernel modules into one rpm package
 inherit kernel-module-combine

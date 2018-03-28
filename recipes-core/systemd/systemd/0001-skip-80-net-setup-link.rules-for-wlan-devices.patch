@@ -1,0 +1,26 @@
+From e50bc872c7ff7a57da7c7504c8b70ecadfaf5fa0 Mon Sep 17 00:00:00 2001
+From: Yunguo Wei <yunguo.wei@windriver.com>
+Date: Mon, 12 Mar 2018 14:58:49 +0800
+Subject: [PATCH] skip 80-net-setup-link.rules for wlan devices
+
+Signed-off-by: Yunguo Wei <yunguo.wei@windriver.com>
+---
+ rules/80-net-setup-link.rules | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/rules/80-net-setup-link.rules b/rules/80-net-setup-link.rules
+index 6e411a9..f71b449 100644
+--- a/rules/80-net-setup-link.rules
++++ b/rules/80-net-setup-link.rules
+@@ -2,6 +2,8 @@
+ 
+ SUBSYSTEM!="net", GOTO="net_setup_link_end"
+ 
++ENV{DEVTYPE}=="wlan", GOTO="net_setup_link_end"
++
+ IMPORT{builtin}="path_id"
+ 
+ ACTION!="add", GOTO="net_setup_link_end"
+-- 
+2.7.4
+

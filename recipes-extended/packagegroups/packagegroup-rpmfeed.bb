@@ -24,6 +24,12 @@ RDEPENDS_${PN} = "\
     openjdk-7-jdk \
     openjdk-8  \
     openjre-8  \
+    packagegroup-cloud-ibm \
+    packagegroup-cloud-aws \
+    packagegroup-cloud-azure \
+    strongswan \
+    xl2tpd \
+    pptpd \
 "
 
 # If using meta-gateway add nodejs and mosquitto

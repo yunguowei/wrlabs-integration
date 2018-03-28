@@ -1,0 +1,2 @@
+# Support L2TP feature
+kconf non-hardware l2tp.cfg

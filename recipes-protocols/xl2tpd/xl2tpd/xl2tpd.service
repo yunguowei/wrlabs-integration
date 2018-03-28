@@ -1,0 +1,13 @@
+[Unit]
+Description=Level 2 Tunnel Protocol Daemon (L2TP)
+After=strongswan.service
+
+[Service]
+Type=forking
+ExecStartPre=/bin/mkdir -p /var/run/xl2tpd
+ExecStartPre=/sbin/modprobe -q l2tp_ppp
+ExecStart=/usr/sbin/xl2tpd
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
