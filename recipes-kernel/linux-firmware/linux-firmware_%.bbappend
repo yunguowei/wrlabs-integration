@@ -17,3 +17,7 @@ PACKAGES =+ "${PN}-rs9113"
 FILES_${PN}-rs9113 += " \
 	${nonarch_base_libdir}/firmware/RS9113* \
 "
+
+FILES_${PN}-usb8897 += " \
+  ${nonarch_base_libdir}/firmware/mrvl/usb8897_uapsta.bin \
+"
