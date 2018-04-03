@@ -1,3 +1,4 @@
+require linux-yocto-pulsar.inc
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
@@ -32,6 +33,8 @@ SRCREV_meta_intel-corei7-64 ?= "${AUTOREV}"
 deltask kernel_version_sanity_check
 
 LINUX_VERSION_EXTENSION = "-pulsar-${LINUX_KERNEL_TYPE}"
+
+KERNEL_CACHE_BRANCH = "yocto-4.12-wr"
 
 KCONF_AUDIT_LEVEL = "0"
 
