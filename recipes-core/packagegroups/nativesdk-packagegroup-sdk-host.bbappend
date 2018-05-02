@@ -7,5 +7,6 @@ RDEPENDS_${PN} += "\
     ${@bb.utils.contains('DISTRO_FEATURES', 'ima', 'nativesdk-ima-evm-utils', '', d)} \
     nativesdk-libxml2-python \
     nativesdk-rpm-tool \
+    nativesdk-ostree \
     nativesdk-python-cython \
     "
