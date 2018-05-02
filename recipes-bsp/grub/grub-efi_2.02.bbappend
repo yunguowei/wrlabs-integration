@@ -15,6 +15,9 @@ do_install_append_class-target() {
     install -m 0600 "${WORKDIR}/grub-runtime.cfg" "${D}${EFI_BOOT_PATH}/grub.cfg"
     sed -i "s#%DISTRO_NAME%#${DISTRO_NAME}#g" "${D}${EFI_BOOT_PATH}/grub.cfg"
     sed -i "s#%DISTRO_VERSION%#${DISTRO_VERSION}#g" "${D}${EFI_BOOT_PATH}/grub.cfg"
+    if [ "${@bb.utils.contains('DISTRO_FEATURES', 'efi-secure-boot', '1', '0', d)}" = "0" ]; then
+        sed -i '#^get_efivar#,#^fi#d' "${D}${EFI_BOOT_PATH}/grub.cfg"
+    fi
 }
 
 do_deploy_append_class-target() {
